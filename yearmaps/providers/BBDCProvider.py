@@ -83,8 +83,10 @@ class BBDCProvider(Provider, ABC):
     def command(ctx: click.Context, uid: str, gtype: str):
         if gtype == 'time':
             provider = BBDCTimeProvider(uid)
-        else:
+        elif gtype == "word":
             provider = BBDCWordProvider(uid)
+        else:
+            raise ProviderError(f"Unknown type {gtype}")
         provider.render(ctx.obj)
 
 
