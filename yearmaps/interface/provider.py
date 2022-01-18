@@ -33,7 +33,25 @@ class ProviderInfo(ABC):
     options: Dict[str, Any] = None
 
 
-class Provider(ProviderInfo, ABC):
+class ProviderInterface(ABC):
+    # Get raw data from data source.
+    @abstractmethod
+    def access(self) -> Any:
+        pass
+
+    # Parse raw data to standard format.
+    @abstractmethod
+    def process(self, raw: Any) -> List[YearData]:
+        pass
+
+    # Register command to click
+    @staticmethod
+    @abstractmethod
+    def command():
+        pass
+
+
+class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # Read cache
     def read_data_file(self) -> Dict:
@@ -52,28 +70,23 @@ class Provider(ProviderInfo, ABC):
 
     # Judge a date should be rendered or not.
     def is_date_valid(self, date: datetime.date):
+        return self.start_date() <= date <= self.end_date()
+
+    # The start date under current mode
+    def start_date(self):
         mode = self.options[config.MODE]
         if mode == 'year':
-            return date.year == self.options[config.YEAR]
+            return datetime.date(self.options[config.YEAR], 1, 1)
         else:
-            start = datetime.date.today() - datetime.timedelta(days=366)
-            return date >= start
+            return datetime.date.today() - datetime.timedelta(days=366)
 
-    # Get raw data from data source.
-    @abstractmethod
-    def access(self) -> Any:
-        pass
-
-    # Parse raw data to standard format.
-    @abstractmethod
-    def process(self, raw: Any) -> List[YearData]:
-        pass
-
-    # Register command to click
-    @staticmethod
-    @abstractmethod
-    def command():
-        pass
+    # The end date under current mode
+    def end_date(self):
+        mode = self.options[config.MODE]
+        if mode == 'year':
+            return datetime.date(self.options[config.YEAR], 12, 31)
+        else:
+            return datetime.date.today()
 
     # Render data to output
     def render(self, options: Dict[str, Any]):
