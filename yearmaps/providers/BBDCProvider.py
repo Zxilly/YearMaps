@@ -1,0 +1,45 @@
+from abc import ABC
+from typing import Any, Dict
+
+import click
+
+from yearmaps.data import YearData
+from yearmaps.interface.provider import Provider
+
+
+class BBDCProvider(Provider, ABC):
+    name = "不背单词"
+
+    uid: str
+    provider: Provider
+
+    def __init__(self, uid: str):
+        self.uid = uid
+
+    def fetch(self):
+        pass
+
+    @staticmethod
+    @click.command('bbdc')
+    @click.option('--uid', type=str, required=True, help='不背单词用户 ID')
+    @click.option('--gtype', type=click.Choice(['time, word']), default='time', help='图数据类型')
+    def command(uid: str, gtype: str):
+        if gtype == 'time':
+            provider = BBDCTimeProvider(uid)
+        else:
+            provider = BBDCWordProvider(uid)
+        provider.render()
+
+
+class BBDCTimeProvider(BBDCProvider):
+    unit = "分钟"
+
+    def parse(self, data: Any) -> Dict[int, YearData]:
+        pass
+
+
+class BBDCWordProvider(BBDCProvider):
+    unit = "词"
+
+    def parse(self, data: Any) -> Dict[int, YearData]:
+        pass
