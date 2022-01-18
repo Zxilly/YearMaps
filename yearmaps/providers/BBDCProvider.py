@@ -1,10 +1,13 @@
 from abc import ABC
+from datetime import datetime
 from typing import Any, Dict
 
 import click
+import requests
 
 from yearmaps.data import YearData
 from yearmaps.interface.provider import Provider
+from yearmaps.utils import ProviderError
 
 ENDPOINT_URL = "https://learnywhere.cn/bb/dashboard/profile/search?userId={user_id}"
 
@@ -28,8 +31,46 @@ class BBDCProvider(Provider, ABC):
     def __init__(self, uid: str):
         self.uid = uid
 
-    def fetch(self):
-        pass
+    def access(self):
+        data = self.read_data_file()
+        if data.get("id") != self.uid:
+            raise ProviderError("user_id 和数据缓存不一致")
+        resp = requests.get(ENDPOINT_URL.format(user_id=self.uid))
+        if not resp.ok:
+            raise ProviderError(f"Meet network error. {resp.reason}")
+        resp_data = resp.json()
+        if data["result_code"] != 200:
+            raise ProviderError(f"Unexpected error. {data}")
+
+        body = resp_data["data_body"]
+        duration = body["durationList"]
+        learn = body["learnList"]
+
+        def today_transform(date):
+            if not date == "今日":
+                return f"{datetime.today().year}-{date}"
+            else:
+                return datetime.today().strftime("%Y-%m-%d")
+
+        for i in duration:
+            full_date = today_transform(i["date"])
+            if full_date not in data["data"]:
+                data["data"][full_date] = {}
+
+            dur = i["duration"]
+            data["data"][full_date]["time"] = dur
+
+        for i in learn:
+            full_date = today_transform(i["date"])
+            if full_date not in data["data"]:
+                data["data"][full_date] = {}
+            learn = i["learnNum"]
+            review = i["reviewNum"]
+            data["data"][full_date]["learn"] = learn
+            data["data"][full_date]["review"] = review
+        self.write_data_file(data)
+
+        return data
 
     @staticmethod
     @click.command('bbdc', help="不背单词")

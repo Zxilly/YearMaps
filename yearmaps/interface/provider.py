@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Any
 
+import click
+
 from yearmaps.constant import config
 from yearmaps.data import YearData
 
@@ -33,7 +35,7 @@ class ProviderInfo(ABC):
 class Provider(ProviderInfo, ABC):
 
     # Read cache
-    def read_data(self) -> Any:
+    def read_data_file(self) -> Dict:
         data_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
         if not data_file.exists():
             return {}
@@ -42,14 +44,14 @@ class Provider(ProviderInfo, ABC):
         return data
 
     # Write cache
-    def write_data(self, cache: Any):
+    def write_data_file(self, cache: Any):
         cache_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
         with open(cache_file, "w", encoding='UTF-8') as f:
             json.dump(cache, f)
 
     # Get raw data from data source.
     @abstractmethod
-    def fetch(self) -> Any:
+    def access(self) -> Any:
         pass
 
     # Parse raw data to standard format.
@@ -66,6 +68,9 @@ class Provider(ProviderInfo, ABC):
     # Render data to output
     def render(self, options: Dict[str, Any]):
         self.options = options
-        raw = self.fetch()
+        click.echo("Start access data...")
+        raw = self.access()
+        click.echo("End access data.")
+        click.echo("Start process data...")
         data = self.process(raw)
         # TODO: render data to picture
