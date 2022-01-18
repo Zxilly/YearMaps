@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 import click
 
@@ -36,7 +36,7 @@ class Provider(ProviderInfo, ABC):
 
     # Read cache
     def read_data_file(self) -> Dict:
-        data_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
+        data_file = Path(self.options[config.DATA_DIR]) / f"{self.id}.json"
         if not data_file.exists():
             return {}
         with open(data_file, "r", encoding='UTF-8') as f:
@@ -45,7 +45,7 @@ class Provider(ProviderInfo, ABC):
 
     # Write cache
     def write_data_file(self, cache: Any):
-        cache_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
+        cache_file = Path(self.options[config.DATA_DIR]) / f"{self.id}.json"
         with open(cache_file, "w", encoding='UTF-8') as f:
             json.dump(cache, f)
 
@@ -56,7 +56,7 @@ class Provider(ProviderInfo, ABC):
 
     # Parse raw data to standard format.
     @abstractmethod
-    def process(self, raw: Any) -> Dict[int, YearData]:
+    def process(self, raw: Any) -> List[YearData]:
         pass
 
     # Register command to click

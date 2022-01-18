@@ -1,11 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import List
+from datetime import date
+from typing import Dict, Union
 
 
-class YearData:
-    year: int
-    data: List[int]
-
-    def __init__(self, year: int, data: List[int]):
-        self.year = year
-        self.data = data
+YearData = Dict[date, Union[int, float]]
