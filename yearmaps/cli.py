@@ -3,8 +3,10 @@ from providers import providers
 
 
 @click.Group
-def group():
-    pass
+@click.option('--data-dir',default='data',help='Directory to store data')
+@click.pass_context
+def group(ctx: click.Context):
+    ctx.ensure_object(dict)
 
 
 def main():

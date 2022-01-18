@@ -11,7 +11,6 @@ class BBDCProvider(Provider, ABC):
     name = "不背单词"
 
     uid: str
-    provider: Provider
 
     def __init__(self, uid: str):
         self.uid = uid
@@ -20,15 +19,16 @@ class BBDCProvider(Provider, ABC):
         pass
 
     @staticmethod
-    @click.command('bbdc')
+    @click.command('bbdc', help="不背单词")
     @click.option('--uid', type=str, required=True, help='不背单词用户 ID')
-    @click.option('--gtype', type=click.Choice(['time, word']), default='time', help='图数据类型')
-    def command(uid: str, gtype: str):
+    @click.option('--gtype', type=click.Choice(['time', 'word']), default='time', help='图数据类型')
+    @click.pass_context
+    def command(ctx: click.Context, uid: str, gtype: str):
         if gtype == 'time':
             provider = BBDCTimeProvider(uid)
         else:
             provider = BBDCWordProvider(uid)
-        provider.render()
+        provider.render(ctx.obj)
 
 
 class BBDCTimeProvider(BBDCProvider):
