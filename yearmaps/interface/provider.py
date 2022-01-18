@@ -1,3 +1,4 @@
+import datetime
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -48,6 +49,15 @@ class Provider(ProviderInfo, ABC):
         cache_file = Path(self.options[config.DATA_DIR]) / f"{self.id}.json"
         with open(cache_file, "w", encoding='UTF-8') as f:
             json.dump(cache, f)
+
+    # Judge a date should be rendered or not.
+    def is_date_valid(self, date: datetime.date):
+        mode = self.options[config.MODE]
+        if mode == 'year':
+            return date.year == self.options[config.YEAR]
+        else:
+            start = datetime.date.today() - datetime.timedelta(days=366)
+            return date >= start
 
     # Get raw data from data source.
     @abstractmethod

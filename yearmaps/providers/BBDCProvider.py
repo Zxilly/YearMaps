@@ -33,13 +33,18 @@ class BBDCProvider(Provider, ABC):
 
     def access(self):
         data = self.read_data_file()
+        if data == {}:
+            data = {
+                "id": self.uid,
+                "data": {}
+            }
         if data.get("id") != self.uid:
             raise ProviderError("user_id 和数据缓存不一致")
         resp = requests.get(ENDPOINT_URL.format(user_id=self.uid))
         if not resp.ok:
             raise ProviderError(f"Meet network error. {resp.reason}")
         resp_data = resp.json()
-        if data["result_code"] != 200:
+        if resp_data["result_code"] != 200:
             raise ProviderError(f"Unexpected error. {data}")
 
         body = resp_data["data_body"]
@@ -88,12 +93,25 @@ class BBDCProvider(Provider, ABC):
 class BBDCTimeProvider(BBDCProvider):
     unit = "分钟"
 
-    def process(self, data: Any) -> Dict[int, YearData]:
-        pass
+    def process(self, data: Any) -> YearData:
+        result = dict()
+        for date, day_data in data['data'].items():
+            date = date.strptime(date, "%Y-%m-%d")
+            if self.is_date_valid(date):
+                time = day_data.get('time', 0)
+                result[date] = time
+        return result
 
 
 class BBDCWordProvider(BBDCProvider):
     unit = "词"
 
     def process(self, data: Any) -> Dict[int, YearData]:
-        pass
+        result = dict()
+        for date, day_data in data['data'].items():
+            date = date.strptime(date, "%Y-%m-%d")
+            if self.is_date_valid(date):
+                learn = day_data.get('learn', 0)
+                review = day_data.get('review', 0)
+                result[date] = learn + review
+        return result
