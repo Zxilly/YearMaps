@@ -8,6 +8,7 @@ import requests
 from yearmaps.data import YearData
 from yearmaps.interface.provider import Provider
 from yearmaps.utils import ProviderError
+from yearmaps.data.colors import orange
 
 ENDPOINT_URL = "https://learnywhere.cn/bb/dashboard/profile/search?userId={user_id}"
 
@@ -25,6 +26,7 @@ class BBDCProvider(Provider, ABC):
 
     name = "不背单词"
     id = "bbdc"
+    colors = orange
 
     def __init__(self, uid: str):
         self.uid = uid

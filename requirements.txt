@@ -1,3 +1,2 @@
-pyecharts
 click
 requests

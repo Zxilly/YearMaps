@@ -6,6 +6,7 @@ import click
 import requests
 
 from yearmaps.data import YearData
+from yearmaps.data.colors import blue
 from yearmaps.interface.provider import Provider
 from yearmaps.utils import ProviderError
 
@@ -32,6 +33,7 @@ query ($user: String!,$start: DateTime) {
 class GitHubProvider(Provider, ABC):
     id = "github"
     name = "GitHub"
+    colors = blue
 
     def __init__(self, user: str, token: str):
         self.user = user

@@ -29,6 +29,12 @@ class ProviderInfo(ABC):
     def id(self) -> str:
         pass
 
+    # Render colors, should have 10 items
+    @property
+    @abstractmethod
+    def colors(self) -> List[str]:
+        pass
+
     # Global group options
     options: Dict[str, Any] = None
 
@@ -96,4 +102,5 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         click.echo("End access data.")
         click.echo("Start process data...")
         data = self.process(raw)
-        # TODO: render data to picture
+
+
