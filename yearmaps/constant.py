@@ -5,3 +5,5 @@ from enum import Enum, unique
 class config(Enum):
     DATA_DIR = "data_dir"
     OUTPUT_DIR = "output_dir"
+    MODE = "mode"
+    YEAR = "year"
