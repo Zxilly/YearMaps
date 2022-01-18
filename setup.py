@@ -26,6 +26,6 @@ setup(
     install_requires=required,
     dependency_links=dependency_links,
     entry_points={
-        "console_scripts": ["yearsmap = yearmaps.cli:main"]
+        "console_scripts": ["yearmaps = yearmaps.script:main"]
     },
 )

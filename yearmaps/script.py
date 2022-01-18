@@ -1,15 +1,23 @@
+import os
+
 import click
-from providers import providers
-from utils import default_data_dir
+
+from yearmaps.constant import Config
+from yearmaps.providers import providers
+from yearmaps.utils import default_data_dir
 
 
-@click.group
-@click.option('--data-dir', default=default_data_dir(), show_default=True, help='Directory to store data')
+@click.group()
+@click.option('--data-dir', '-d', default=str(default_data_dir()), type=str, show_default=True,
+              help='Directory to store data')
+@click.option('--output-dir', '-o', default=os.getcwd(), type=str, show_default=True,
+              help='Directory to store output')
 @click.pass_context
-def cli(ctx: click.Context, data_dir: str):
+def cli(ctx: click.Context, data_dir: str, output_dir: str):
     ctx.ensure_object(dict)
     obj = ctx.obj
-    obj['DATA-DIR'] = data_dir
+    obj[Config.DATA_DIR] = data_dir
+    obj[Config.OUTPUT_DIR] = output_dir
 
 
 def main():

@@ -1,34 +1,29 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-import click
-
 from yearmaps.data import YearData
 
 
 class ProviderInfo(ABC):
-    """
-    Component unit.
-    """
 
+    # Component unit.
     @property
     @abstractmethod
     def unit(self) -> str:
         pass
 
-    """
-    Provider name
-    """
+    # Provider name
+    @property
+    def name(self) -> str:
+        return self.id.upper()
 
+    # Provider id
     @property
     @abstractmethod
-    def name(self) -> str:
+    def id(self) -> str:
         pass
 
-    """
-    Global group options
-    """
-
+    # Global group options
     options: Dict[str, Any] = None
 
 
@@ -36,9 +31,10 @@ class Provider(ProviderInfo, ABC):
 
     # Read cache
     def read_cache(self):
-        pass
+        cache_file = self.options
 
-    # Write cache
+        # Write cache
+
     def write_cache(self):
         pass
 
