@@ -2,7 +2,7 @@ import os
 
 import click
 
-from yearmaps.constant import Config
+from yearmaps.constant import config
 from yearmaps.providers import providers
 from yearmaps.utils import default_data_dir
 
@@ -16,8 +16,8 @@ from yearmaps.utils import default_data_dir
 def cli(ctx: click.Context, data_dir: str, output_dir: str):
     ctx.ensure_object(dict)
     obj = ctx.obj
-    obj[Config.DATA_DIR] = data_dir
-    obj[Config.OUTPUT_DIR] = output_dir
+    obj[config.DATA_DIR] = data_dir
+    obj[config.OUTPUT_DIR] = output_dir
 
 
 def main():

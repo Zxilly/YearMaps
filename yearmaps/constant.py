@@ -2,6 +2,6 @@ from enum import Enum, unique
 
 
 @unique
-class Config(Enum):
+class config(Enum):
     DATA_DIR = "data_dir"
     OUTPUT_DIR = "output_dir"

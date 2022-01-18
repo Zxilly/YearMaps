@@ -10,6 +10,16 @@ ENDPOINT_URL = "https://learnywhere.cn/bb/dashboard/profile/search?userId={user_
 
 
 class BBDCProvider(Provider, ABC):
+    """
+    cache structure
+    id: user-id
+    data:
+      2021-1-1:
+        learn: 20
+        time: 5
+        review: 20
+    """
+
     name = "不背单词"
     id = "bbdc"
 
@@ -37,12 +47,12 @@ class BBDCProvider(Provider, ABC):
 class BBDCTimeProvider(BBDCProvider):
     unit = "分钟"
 
-    def parse(self, data: Any) -> Dict[int, YearData]:
+    def process(self, data: Any) -> Dict[int, YearData]:
         pass
 
 
 class BBDCWordProvider(BBDCProvider):
     unit = "词"
 
-    def parse(self, data: Any) -> Dict[int, YearData]:
+    def process(self, data: Any) -> Dict[int, YearData]:
         pass

@@ -1,6 +1,9 @@
+import json
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Dict, Any
 
+from yearmaps.constant import config
 from yearmaps.data import YearData
 
 
@@ -30,13 +33,19 @@ class ProviderInfo(ABC):
 class Provider(ProviderInfo, ABC):
 
     # Read cache
-    def read_cache(self):
-        cache_file = self.options
+    def read_data(self) -> Any:
+        data_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
+        if not data_file.exists():
+            return {}
+        with open(data_file, "r", encoding='UTF-8') as f:
+            data = json.load(f)
+        return data
 
-        # Write cache
-
-    def write_cache(self):
-        pass
+    # Write cache
+    def write_data(self, cache: Any):
+        cache_file = Path(self.options[config.DATA_DIR]) / f"{self.name}.json"
+        with open(cache_file, "w", encoding='UTF-8') as f:
+            json.dump(cache, f)
 
     # Get raw data from data source.
     @abstractmethod
@@ -45,7 +54,7 @@ class Provider(ProviderInfo, ABC):
 
     # Parse raw data to standard format.
     @abstractmethod
-    def parse(self, raw: Any) -> Dict[int, YearData]:
+    def process(self, raw: Any) -> Dict[int, YearData]:
         pass
 
     # Register command to click
@@ -58,5 +67,5 @@ class Provider(ProviderInfo, ABC):
     def render(self, options: Dict[str, Any]):
         self.options = options
         raw = self.fetch()
-        data = self.parse(raw)
+        data = self.process(raw)
         # TODO: render data to picture
