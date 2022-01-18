@@ -14,8 +14,8 @@ def default_data_dir() -> Path:
 
 
 def cache_dir(data_dir: Path = default_data_dir()) -> Path:
-    cache_dir = data_dir / "cache"
-    return ensure_dir(cache_dir)
+    dir_ = data_dir / "cache"
+    return ensure_dir(dir_)
 
 
 def ensure_dir(dir_: Path) -> Path:
