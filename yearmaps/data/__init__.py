@@ -1,1 +1,1 @@
-from .data_class import *
+from .type import *

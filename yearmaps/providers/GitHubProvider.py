@@ -68,7 +68,7 @@ class GitHubContribProvider(GitHubProvider):
             raise ProviderError(f"{resp.status_code} - {resp.reason}")
         return resp.json()
 
-    def process(self, raw: Any) -> List[YearData]:
+    def process(self, raw: Any) -> YearData:
         result = dict()
         data = raw['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
         for week in data:
