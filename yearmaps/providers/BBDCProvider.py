@@ -59,7 +59,6 @@ class BBDCProvider(Provider, ABC):
             full_date = today_transform(i["date"])
             if full_date not in data["data"]:
                 data["data"][full_date] = {}
-
             dur = i["duration"]
             data["data"][full_date]["time"] = dur
 

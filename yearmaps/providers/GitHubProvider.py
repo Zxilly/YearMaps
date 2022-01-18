@@ -1,3 +1,4 @@
+from datetime import datetime
 from abc import ABC
 from typing import Any, List
 
@@ -8,7 +9,24 @@ from yearmaps.data import YearData
 from yearmaps.interface.provider import Provider
 from yearmaps.utils import ProviderError
 
-ENDPOINT_URL = ""
+ENDPOINT_URL = "https://api.github.com/graphql"
+
+contribution_query = """
+query ($user: String!,$start: DateTime) {
+  user(login: $user) {
+    contributionsCollection(from:$start) {
+      contributionCalendar {
+        weeks {
+          contributionDays {
+            contributionCount
+            date
+          }
+        }
+      }
+    }
+  }
+}
+"""
 
 
 class GitHubProvider(Provider, ABC):
@@ -19,14 +37,6 @@ class GitHubProvider(Provider, ABC):
         self.user = user
         self.token = token
 
-    def access(self) -> Any:
-        start = self.start_date().strftime("%Y-%m-%d")
-        end = self.end_date().strftime("%Y-%m-%d")
-        resp = requests.get(ENDPOINT_URL.format(user_name=self.user, start_day=start, end_day=end))
-        if not resp.ok:
-            raise ProviderError(f"Failed to access GitHub: {resp.status_code}")
-        resp.json()
-
     @staticmethod
     @click.command('github', help="GitHub")
     @click.option('--user', '-u', type=str, required=True, help="GitHub user name")
@@ -35,7 +45,7 @@ class GitHubProvider(Provider, ABC):
     @click.pass_context
     def command(ctx: click.Context, user: str, gtype: str, token: str):
         if gtype == 'contrib':
-            provider = GitHubContribProvider(user)
+            provider = GitHubContribProvider(user, token)
         else:
             raise ProviderError(f"Unknown type {gtype}")
         provider.render(ctx.obj)
@@ -44,5 +54,26 @@ class GitHubProvider(Provider, ABC):
 class GitHubContribProvider(GitHubProvider):
     unit = "contribution"
 
+    def access(self) -> Any:
+        resp = requests.post(ENDPOINT_URL, json={
+            'query': contribution_query,
+            'variables': {
+                'user': self.user,
+                'start': datetime.combine(self.start_date(), datetime.min.time()).isoformat()
+            }
+        }, headers={
+            'Authorization': f"bearer {self.token}"
+        })
+        if not resp.ok:
+            raise ProviderError(f"{resp.status_code} - {resp.reason}")
+        return resp.json()
+
     def process(self, raw: Any) -> List[YearData]:
-        pass
+        result = dict()
+        data = raw['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
+        for week in data:
+            for day in week['contributionDays']:
+                date = datetime.fromisoformat(day['date']).date()
+                value = day['contributionCount']
+                result[date] = value
+        return result
