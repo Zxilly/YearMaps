@@ -26,8 +26,6 @@ class BBDCProvider(Provider, ABC):
     name = "不背单词"
     id = "bbdc"
 
-    uid: str
-
     def __init__(self, uid: str):
         self.uid = uid
 
