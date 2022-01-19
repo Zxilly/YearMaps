@@ -150,7 +150,6 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 if np.isnan(empty_grid[get_day(date)][get_week(date)]):
                     empty_grid[get_day(date)][get_week(date)] = 0
                 if date.weekday() == 0:
-                    print(date)
                     month_list[get_week(date)] = date.month
             return empty_grid, month_list
 
