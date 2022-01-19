@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import json
 from abc import ABC, abstractmethod
@@ -5,6 +6,8 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 import click
+import matplotlib.figure
+import matplotlib.axes
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -120,6 +123,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
             days = (graph_end - graph_start).days
             weeks = days // 7
+            if weeks * 7 < days:
+                weeks += 1
 
             empty_grid = np.empty((7, weeks), dtype="float64")
             empty_grid = np.nan * empty_grid
@@ -128,7 +133,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 return (i - start).days % 7
 
             def get_week(i: datetime.date) -> int:
-                return (i - start).days // 7 - 1
+                week = (i - start).days // 7
+                return week
 
             for date, value in data.items():
                 if date < start:
@@ -138,12 +144,35 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
                 empty_grid[get_day(date)][get_week(date)] = value
 
-            for date in date_range(start, end):
-                if np.isnan(empty_grid[get_day(date)][get_week(date)]):
-                    empty_grid[get_day(date)][get_week(date)] = 0
+            # for date in date_range(start, end):
+            #     if np.isnan(empty_grid[get_day(date)][get_week(date)]):
+            #         empty_grid[get_day(date)][get_week(date)] = 0
             return empty_grid
 
         grid = fulfill_data()
 
         fig_size = (12, 5)
         fig, ax = plt.subplots(figsize=fig_size, dpi=300)
+        fig: matplotlib.figure.Figure
+        ax: matplotlib.axes.Axes
+
+        ax.get_figure()
+
+        pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=0)
+        pc.set_clim(0, np.nanmax(grid))
+        ax.invert_yaxis()
+        ax.set_aspect("equal")
+
+        # add weekdays label
+        ax.tick_params(axis="y", which="major", pad=4, width=0)
+        ax.set_yticks([x + 0.5 for x in range(0, 7, 2)])
+        ax.set_yticklabels(
+            ['Mon', 'Wed', 'Fri', 'Sun'],
+        )
+
+        ax.set_frame_on(False)
+        fig.tight_layout()
+
+        bbox = ax.get_position()
+
+        fig.show()
