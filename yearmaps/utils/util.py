@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, date
 
 
 def date_range(start_date, end_date):

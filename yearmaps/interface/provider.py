@@ -129,11 +129,11 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             empty_grid = np.empty((7, weeks), dtype="float64")
             empty_grid = np.nan * empty_grid
 
-            def get_day(i: datetime.date) -> int:
-                return (i - start).days % 7
+            def get_day(i_: datetime.date) -> int:
+                return (i_ - start).days % 7
 
-            def get_week(i: datetime.date) -> int:
-                week = (i - start).days // 7
+            def get_week(i_: datetime.date) -> int:
+                week = (i_ - start).days // 7
                 return week
 
             for date, value in data.items():
@@ -144,19 +144,22 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
                 empty_grid[get_day(date)][get_week(date)] = value
 
-            # for date in date_range(start, end):
-            #     if np.isnan(empty_grid[get_day(date)][get_week(date)]):
-            #         empty_grid[get_day(date)][get_week(date)] = 0
-            return empty_grid
+            month_list = np.linspace(-1, -1, weeks, dtype=int)
+            for date in date_range(start, end):
+                date: datetime.date
+                if np.isnan(empty_grid[get_day(date)][get_week(date)]):
+                    empty_grid[get_day(date)][get_week(date)] = 0
+                if date.weekday() == 0:
+                    print(date)
+                    month_list[get_week(date)] = date.month
+            return empty_grid, month_list
 
-        grid = fulfill_data()
+        grid, months = fulfill_data()
 
         fig_size = (12, 5)
         fig, ax = plt.subplots(figsize=fig_size, dpi=300)
         fig: matplotlib.figure.Figure
         ax: matplotlib.axes.Axes
-
-        ax.get_figure()
 
         pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=0)
         pc.set_clim(0, np.nanmax(grid))
@@ -165,10 +168,33 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         # add weekdays label
         ax.tick_params(axis="y", which="major", pad=4, width=0)
-        ax.set_yticks([x + 0.5 for x in range(0, 7, 2)])
+        ax.set_yticks([x + 0.5 for x in range(1, 6, 2)])
         ax.set_yticklabels(
-            ['Mon', 'Wed', 'Fri', 'Sun'],
+            ['Tue', 'Thu', 'Sat'],
         )
+
+        # add months label
+        current_month = -1
+        month_locs = []
+        month_labels = []
+        for i, month in enumerate(months):
+            if month != current_month:
+                month_locs.append(i + 0.5)
+                month_labels.append(calendar.month_abbr[int(month)])
+                current_month = month
+
+        # trick to remove too close labels
+        if month_locs[1] - month_locs[0] < 4:
+            month_locs.pop(0)
+            month_labels.pop(0)
+        if month_locs[-1] - month_locs[-2] < 4:
+            month_locs.pop()
+            month_labels.pop()
+
+        ax.tick_params(axis="x", which="major", pad=2, width=0)
+        ax.set_xticks(month_locs)
+        ax.set_xticklabels(month_labels, ha="center")
+        ax.xaxis.tick_top()
 
         ax.set_frame_on(False)
         fig.tight_layout()
