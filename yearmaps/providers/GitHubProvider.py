@@ -72,7 +72,7 @@ class GitHubContribProvider(GitHubProvider):
 
     def process(self, raw: Any) -> YearData:
         result = dict()
-        data = raw['utils']['user']['contributionsCollection']['contributionCalendar']['weeks']
+        data = raw['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
         for week in data:
             for day in week['contributionDays']:
                 date = datetime.fromisoformat(day['date']).date()

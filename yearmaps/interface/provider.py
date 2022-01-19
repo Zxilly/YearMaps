@@ -5,9 +5,12 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 import click
+import numpy as np
+from matplotlib import pyplot as plt
 
-from yearmaps.constant import config
+from yearmaps.constant import config, ONE_DAY
 from yearmaps.utils import YearData
+from yearmaps.utils.util import date_range
 
 
 class ProviderInfo(ABC):
@@ -47,7 +50,7 @@ class ProviderInterface(ABC):
 
     # Parse raw utils to standard format.
     @abstractmethod
-    def process(self, raw: Any) -> List[YearData]:
+    def process(self, raw: Any) -> YearData:
         pass
 
     # Register command to click
@@ -97,10 +100,50 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
     # Render utils to output
     def render(self, options: Dict[str, Any]):
         self.options = options
-        click.echo("Start access utils...")
+        click.echo("Start access data...")
         raw = self.access()
-        click.echo("End access utils.")
-        click.echo("Start process utils...")
+        click.echo("End access data.")
+        click.echo("Start process data...")
         data = self.process(raw)
+        click.echo("End process data.")
 
+        def fulfill_data() -> np:
+            start = self.start_date()
+            end = self.end_date()
+            graph_start = start
+            graph_end = end
 
+            while graph_start.weekday() != 0:
+                graph_start -= ONE_DAY
+            while graph_end.weekday() != 6:
+                graph_end += ONE_DAY
+
+            days = (graph_end - graph_start).days
+            weeks = days // 7
+
+            empty_grid = np.empty((7, weeks), dtype="float64")
+            empty_grid = np.nan * empty_grid
+
+            def get_day(i: datetime.date) -> int:
+                return (i - start).days % 7
+
+            def get_week(i: datetime.date) -> int:
+                return (i - start).days // 7 - 1
+
+            for date, value in data.items():
+                if date < start:
+                    continue
+                if date > end:
+                    continue
+
+                empty_grid[get_day(date)][get_week(date)] = value
+
+            for date in date_range(start, end):
+                if np.isnan(empty_grid[get_day(date)][get_week(date)]):
+                    empty_grid[get_day(date)][get_week(date)] = 0
+            return empty_grid
+
+        grid = fulfill_data()
+
+        fig_size = (12, 5)
+        fig, ax = plt.subplots(figsize=fig_size, dpi=300)

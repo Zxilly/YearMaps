@@ -1,3 +1,4 @@
+from datetime import timedelta
 from enum import Enum, unique
 
 
@@ -7,3 +8,6 @@ class config(Enum):
     OUTPUT_DIR = "output_dir"
     MODE = "mode"
     YEAR = "year"
+
+
+ONE_DAY = timedelta(days=1)

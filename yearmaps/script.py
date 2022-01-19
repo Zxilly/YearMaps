@@ -9,8 +9,8 @@ from yearmaps.utils.file import default_data_dir
 
 
 @click.group()
-@click.option('--utils-dir', '-d', default=str(default_data_dir()), type=str, show_default=True,
-              help='Directory to store utils')
+@click.option('--data-dir', '-d', default=str(default_data_dir()), type=str, show_default=True,
+              help='Directory to store datas')
 @click.option('--output-dir', '-o', default=os.getcwd(), type=str, show_default=True,
               help='Directory to store output')
 @click.option('--mode', '-m', default='till_now', type=click.Choice(['till_now', 'year']), show_default=True,
