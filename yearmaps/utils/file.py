@@ -1,8 +1,6 @@
 from pathlib import Path
 
-
-class ProviderError(Exception):
-    pass
+from yearmaps.utils.error import ProviderError
 
 
 def ensure_dir(dir_: Path) -> Path:
@@ -11,7 +9,7 @@ def ensure_dir(dir_: Path) -> Path:
         return dir_
     else:
         if not dir_.is_dir():
-            raise ProviderError("Default data directory is not a directory")
+            raise ProviderError("Default utils directory is not a directory")
         else:
             return dir_
 

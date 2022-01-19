@@ -5,10 +5,10 @@ from typing import Any, List
 import click
 import requests
 
-from yearmaps.data import YearData
-from yearmaps.data.colors import blue
+from yearmaps.utils import YearData
+from yearmaps.utils.colors import blue
 from yearmaps.interface.provider import Provider
-from yearmaps.utils import ProviderError
+from yearmaps.utils.error import ProviderError
 
 ENDPOINT_URL = "https://api.github.com/graphql"
 
@@ -72,7 +72,7 @@ class GitHubContribProvider(GitHubProvider):
 
     def process(self, raw: Any) -> YearData:
         result = dict()
-        data = raw['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
+        data = raw['utils']['user']['contributionsCollection']['contributionCalendar']['weeks']
         for week in data:
             for day in week['contributionDays']:
                 date = datetime.fromisoformat(day['date']).date()

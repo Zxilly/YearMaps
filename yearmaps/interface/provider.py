@@ -7,7 +7,7 @@ from typing import Dict, Any, List
 import click
 
 from yearmaps.constant import config
-from yearmaps.data import YearData
+from yearmaps.utils import YearData
 
 
 class ProviderInfo(ABC):
@@ -40,12 +40,12 @@ class ProviderInfo(ABC):
 
 
 class ProviderInterface(ABC):
-    # Get raw data from data source.
+    # Get raw utils from utils source.
     @abstractmethod
     def access(self) -> Any:
         pass
 
-    # Parse raw data to standard format.
+    # Parse raw utils to standard format.
     @abstractmethod
     def process(self, raw: Any) -> List[YearData]:
         pass
@@ -94,13 +94,13 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         else:
             return datetime.date.today()
 
-    # Render data to output
+    # Render utils to output
     def render(self, options: Dict[str, Any]):
         self.options = options
-        click.echo("Start access data...")
+        click.echo("Start access utils...")
         raw = self.access()
-        click.echo("End access data.")
-        click.echo("Start process data...")
+        click.echo("End access utils.")
+        click.echo("Start process utils...")
         data = self.process(raw)
 
 
