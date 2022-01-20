@@ -9,10 +9,13 @@ import click
 import matplotlib.figure
 import matplotlib.axes
 import numpy as np
+import matplotlib as mpl
+import matplotlib.colors
 from matplotlib import pyplot as plt
 
 from yearmaps.constant import config, ONE_DAY
 from yearmaps.utils import YearData
+from yearmaps.utils.colors import PolarisationColorMap
 from yearmaps.utils.util import date_range
 
 
@@ -103,10 +106,10 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
     # Render utils to output
     def render(self, options: Dict[str, Any]):
         self.options = options
-        click.echo("Start access data...")
+        click.echo(f"Start access {self.name} data...")
         raw = self.access()
         click.echo("End access data.")
-        click.echo("Start process data...")
+        click.echo(f"Start process {self.name} data...")
         data = self.process(raw)
         click.echo("End process data.")
 
@@ -130,11 +133,10 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             empty_grid = np.nan * empty_grid
 
             def get_day(i_: datetime.date) -> int:
-                return (i_ - start).days % 7
+                return i_.weekday()
 
             def get_week(i_: datetime.date) -> int:
-                week = (i_ - start).days // 7
-                return week
+                return (i_ - graph_start).days // 7
 
             for date, value in data.items():
                 if date < start:
@@ -154,19 +156,22 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             return empty_grid, month_list
 
         grid, months = fulfill_data()
+        mpl.rcParams['font.family'] = 'Consolas'
+
+        c_map = PolarisationColorMap(self.colors)
 
         fig_size = (12, 5)
         fig, ax = plt.subplots(figsize=fig_size, dpi=300)
         fig: matplotlib.figure.Figure
         ax: matplotlib.axes.Axes
 
-        pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=0)
+        pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=1, cmap=c_map)
         pc.set_clim(0, np.nanmax(grid))
         ax.invert_yaxis()
         ax.set_aspect("equal")
 
         # add weekdays label
-        ax.tick_params(axis="y", which="major", pad=4, width=0)
+        ax.tick_params(axis="y", which="major", pad=1, width=0)
         ax.set_yticks([x + 0.5 for x in range(1, 6, 2)])
         ax.set_yticklabels(
             ['Tue', 'Thu', 'Sat'],
@@ -190,7 +195,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             month_locs.pop()
             month_labels.pop()
 
-        ax.tick_params(axis="x", which="major", pad=2, width=0)
+        ax.tick_params(axis="x", which="major", pad=0, width=0)
         ax.set_xticks(month_locs)
         ax.set_xticklabels(month_labels, ha="center")
         ax.xaxis.tick_top()

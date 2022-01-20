@@ -1,3 +1,6 @@
+from matplotlib.colors import ListedColormap, to_rgba_array
+import numpy as np
+
 red = ["#ffebee", "#ffcdd2", "#ef9a9a", "#e57373", "#ef5350", "#f44336", "#e53935", "#d32f2f", "#c62828", "#b71c1c"]
 pink = ["#fce4ec", "#f8bbd0", "#f48fb1", "#f06292", "#ec407a", "#e91e63", "#d81b60", "#c2185b", "#ad1457", "#880e4f"]
 purple = ["#f3e5f5", "#e1bee7", "#ce93d8", "#ba68c8", "#ab47bc", "#9c27b0", "#8e24aa", "#7b1fa2", "#6a1b9a",
@@ -27,3 +30,19 @@ brown = ["#efebe9", "#d7ccc8", "#bcaaa4", "#a1887f", "#8d6e63", "#795548", "#6d4
 grey = ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121", ]
 bluegrey = ["#eceff1", "#cfd8dc", "#b0bec5", "#90a4ae", "#78909c", "#607d8b", "#546e7a", "#455a64", "#37474f",
             "#263238"]
+
+
+class PolarisationColorMap(ListedColormap):
+    def __init__(self, colors):
+        colors = colors.copy()
+        self.zero_color = to_rgba_array(colors[0])
+        colors.pop(0)
+        super().__init__(colors)
+
+    # noinspection PyShadowingBuiltins
+    def __call__(self, X, alpha=None, bytes=False):
+        index = np.where(X == 0)
+        color = super(ListedColormap, self).__call__(X, alpha=alpha, bytes=bytes)
+        for i in index:
+            color[i] = self.zero_color
+        return color
