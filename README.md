@@ -28,6 +28,7 @@ Options:
 
 Commands:
   bbdc    不背单词
+  cf      Codeforces
   github  GitHub
 ```
 
@@ -47,7 +48,25 @@ Options:
   -t, --type [time|word]  图数据类型
   --help                  Show this message and exit.
 ```
+
 ![bbdc](https://user-images.githubusercontent.com/31370133/150357416-36b3bd83-aa8c-4065-aabb-f130f0392476.png)
+
+</details>
+
+### Codeforces
+
+<details>
+
+```bash
+Usage: yearmaps cf [OPTIONS]
+
+  Codeforces
+
+Options:
+  -u, --user TEXT      Codeforces user name  [required]
+  -t, --type [all|ac]  图数据类型
+  --help               Show this message and exit.
+```
 
 </details>
 
