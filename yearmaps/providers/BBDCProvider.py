@@ -97,7 +97,7 @@ class BBDCTimeProvider(BBDCProvider):
     def process(self, data: Any) -> YearData:
         result = dict()
         for date, day_data in data['utils'].items():
-            date = date.strptime(date, "%Y-%m-%d")
+            date = datetime.strptime(date, "%Y-%m-%d").date()
             if self.is_date_valid(date):
                 time = day_data.get('time', 0)
                 result[date] = time

@@ -5,20 +5,24 @@ import click
 
 
 class PolarisationColorMap(ListedColormap):
-    def __init__(self, colors):
+    def __init__(self, colors, full_zero=False):
         colors = colors.copy()
         self.zero_color = to_rgba_array(colors[0])
+        self.full_zero = full_zero
         colors.pop(0)
         super().__init__(colors)
 
     # noinspection PyShadowingBuiltins
     def __call__(self, X, alpha=None, bytes=False):
-        a = type(X)
         if type(X) == numpy.ma.core.MaskedArray:
             index = np.where(X == 0)
             color = super(ListedColormap, self).__call__(X, alpha=alpha, bytes=bytes)
             for i in index:
                 color[i] = self.zero_color
+            if self.full_zero:
+                for i in range(len(color)):
+                    if type(X[i]) != numpy.ma.core.MaskedConstant:
+                        color[i] = self.zero_color
             return color
         click.echo(f"Unhandled situation {type(X)}", err=True)
         return super(ListedColormap, self).__call__(X, alpha=alpha, bytes=bytes)

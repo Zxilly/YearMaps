@@ -6,11 +6,11 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 import click
-import matplotlib.figure
-import matplotlib.axes
-import numpy as np
 import matplotlib as mpl
+import matplotlib.axes
 import matplotlib.colors
+import matplotlib.figure
+import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
@@ -159,17 +159,18 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             return empty_grid, month_list
 
         grid, months = fulfill_data()
+
         mpl.rcParams['font.family'] = 'Consolas'
         mpl.rcParams['svg.fonttype'] = 'none'
 
-        c_map = PolarisationColorMap(self.colors)
+        grid_max = np.nanmax(grid)
+
+        c_map = PolarisationColorMap(self.colors, grid_max == 0)
 
         fig_size = (10, 3)
-        fig, ax = plt.subplots(figsize=fig_size, dpi=100)
+        fig, ax = plt.subplots(figsize=fig_size, dpi=400)
         fig: matplotlib.figure.Figure
         ax: matplotlib.axes.Axes
-
-        grid_max = np.nanmax(grid)
 
         pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=1, cmap=c_map)
         pc.set_clim(0, grid_max)
@@ -177,7 +178,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         ax.set_aspect("equal")
 
         # add weekdays label
-        ax.tick_params(axis="y", which="major", pad=1, width=0)
+        ax.tick_params(axis="y", which="major", pad=1, width=0, colors='#24292f')
         ax.set_yticks([x + 0.5 for x in range(1, 6, 2)])
         ax.set_yticklabels(
             ['Tue', 'Thu', 'Sat'],
@@ -201,7 +202,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             month_locs.pop()
             month_labels.pop()
 
-        ax.tick_params(axis="x", which="major", pad=0, width=0)
+        ax.tick_params(axis="x", which="major", pad=0, width=0, color='#24292f')
         ax.set_xticks(month_locs)
         ax.set_xticklabels(month_labels, ha="center")
         ax.xaxis.tick_top()
@@ -224,8 +225,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         cax.set_yticklabels(["0", str(int(grid_max))])
         cax.tick_params(axis="y", which="major", pad=0, width=0)
 
-        title_font_dict = {'fontsize': 24,
-                           'fontfamily': 'sans-serif',
+        title_font_dict = {'fontsize': 30,
+                           'fontfamily': 'Microsoft YaHei',
                            'fontweight': 'bold'}
         ax.set_title(self.name, fontdict=title_font_dict, pad=10, loc='left')
 
