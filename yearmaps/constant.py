@@ -8,6 +8,7 @@ class config(Enum):
     OUTPUT_DIR = "output_dir"
     MODE = "mode"
     YEAR = "year"
+    FILE_TYPE = "file_type"
 
 
 ONE_DAY = timedelta(days=1)

@@ -77,4 +77,5 @@ dmypy.json
 .pyre/
 .pytype/
 cython_debug/
-*.svg
+/*.svg
+/*.png

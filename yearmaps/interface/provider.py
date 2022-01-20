@@ -245,5 +245,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 fontdict=hint_font_dict,
                 transform=ax.transAxes)
 
-        path = Path(self.options[config.OUTPUT_DIR]) / f"{self.id}.svg"
-        plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format='svg')
+        file_type = self.options[config.FILE_TYPE]
+
+        path = Path(self.options[config.OUTPUT_DIR]) / f"{self.id}.{file_type}"
+        plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)

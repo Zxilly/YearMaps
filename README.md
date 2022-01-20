@@ -2,6 +2,8 @@
 
 生成一年的热力图。
 
+![image](https://user-images.githubusercontent.com/31370133/150357084-f0ddb8f5-26c0-4526-9f3e-bc1e3aa1784a.png)
+
 # 安装
 
 ```bash
@@ -45,6 +47,7 @@ Options:
   -t, --type [time|word]  图数据类型
   --help                  Show this message and exit.
 ```
+![bbdc](https://user-images.githubusercontent.com/31370133/150357416-36b3bd83-aa8c-4065-aabb-f130f0392476.png)
 
 </details>
 
@@ -63,5 +66,7 @@ Options:
   -t, --type [contrib]  图数据类型
   --help                Show this message and exit.
 ```
+
+![image](https://user-images.githubusercontent.com/31370133/150357084-f0ddb8f5-26c0-4526-9f3e-bc1e3aa1784a.png)
 
 </details>

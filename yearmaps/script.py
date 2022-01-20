@@ -13,16 +13,19 @@ from yearmaps.utils.file import default_data_dir
               help='Directory to store datas')
 @click.option('--output-dir', '-o', default=os.getcwd(), type=str, show_default=True,
               help='Directory to store output')
+@click.option('--file-type', '-f', default='svg', type=click.Choice(['svg', 'png']), show_default=True,
+              help='File type to export')
 @click.option('--mode', '-m', default='till_now', type=click.Choice(['till_now', 'year']), show_default=True,
               help='Generate mode of the program')
 @click.option('--year', '-y', default=datetime.now().year, type=int, show_default=True,
               help='Year to generate, this options depends on mode=year')
 @click.pass_context
-def cli(ctx: click.Context, data_dir: str, output_dir: str, mode: str, year: int):
+def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int):
     ctx.ensure_object(dict)
     obj = ctx.obj
     obj[config.DATA_DIR] = data_dir
     obj[config.OUTPUT_DIR] = output_dir
+    obj[config.FILE_TYPE] = file_type
     if mode == 'year':
         obj[config.MODE] = mode
         obj[config.YEAR] = year
