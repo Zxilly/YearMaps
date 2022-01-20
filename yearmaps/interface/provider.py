@@ -3,7 +3,7 @@ import datetime
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Callable
 
 import click
 import matplotlib as mpl
@@ -29,6 +29,10 @@ class ProviderInfo(ABC):
     @abstractmethod
     def unit(self) -> str:
         pass
+
+    @property
+    def dtype(self) -> Callable:
+        return int
 
     # Provider name
     @property
@@ -164,6 +168,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         mpl.rcParams['svg.fonttype'] = 'none'
 
         grid_max = np.nanmax(grid)
+        grid_sum = np.nansum(grid)
 
         c_map = PolarisationColorMap(self.colors, grid_max == 0)
 
@@ -228,7 +233,17 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         title_font_dict = {'fontsize': 30,
                            'fontfamily': 'Microsoft YaHei',
                            'fontweight': 'bold'}
-        ax.set_title(self.name, fontdict=title_font_dict, pad=10, loc='left')
+        ax.set_title(self.name, fontdict=title_font_dict, pad=15, loc='left')
+
+        hint_font_dict = {
+            'fontfamily': 'Microsoft YaHei',
+        }
+
+        ax.text(1, 1.25, f"{self.dtype(grid_sum)} {self.unit}",
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                fontdict=hint_font_dict,
+                transform=ax.transAxes)
 
         path = Path(self.options[config.OUTPUT_DIR]) / f"{self.id}.svg"
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format='svg')
