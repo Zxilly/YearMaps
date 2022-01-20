@@ -228,4 +228,5 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                            'fontweight': 'bold'}
         ax.set_title(self.name, fontdict=title_font_dict, pad=10, loc='left')
 
-        fig.show()
+        path = Path(self.options[config.OUTPUT_DIR]) / f"{self.id}.svg"
+        plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format='svg')
