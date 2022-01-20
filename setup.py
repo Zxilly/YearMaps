@@ -13,6 +13,9 @@ dependency_links = []
 for line in requirements:
     required.append(line)
 
+with open("README.md", "r", encoding='UTF-8') as fh:
+    long_description = fh.read()
+
 setup(
     name="yearmaps",
     author="Zxilly",
@@ -21,6 +24,8 @@ setup(
     license="GPLv3",
     version="0.0.1",
     description="Generate heat map of a year.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     include_package_data=True,
     install_requires=required,
@@ -28,4 +33,11 @@ setup(
     entry_points={
         "console_scripts": ["yearmaps = yearmaps.script:main"]
     },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Development Status :: 4 - Beta",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+        "Natural Language :: Chinese (Simplified)"
+    ],
 )
