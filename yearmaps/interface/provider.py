@@ -12,6 +12,9 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.colors
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.transforms import Bbox
 
 from yearmaps.constant import config, ONE_DAY
 from yearmaps.utils import YearData
@@ -160,13 +163,15 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         c_map = PolarisationColorMap(self.colors)
 
-        fig_size = (12, 5)
-        fig, ax = plt.subplots(figsize=fig_size, dpi=300)
+        fig_size = (10, 3)
+        fig, ax = plt.subplots(figsize=fig_size, dpi=100)
         fig: matplotlib.figure.Figure
         ax: matplotlib.axes.Axes
 
+        grid_max = np.nanmax(grid)
+
         pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=1, cmap=c_map)
-        pc.set_clim(0, np.nanmax(grid))
+        pc.set_clim(0, grid_max)
         ax.invert_yaxis()
         ax.set_aspect("equal")
 
@@ -201,8 +206,26 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         ax.xaxis.tick_top()
 
         ax.set_frame_on(False)
-        fig.tight_layout()
 
-        bbox = ax.get_position()
+        bbox: Bbox = ax.get_position()
+        cax: Axes = fig.add_axes(
+            [
+                bbox.x1 + 0.015,
+                bbox.y0,
+                0.015,
+                bbox.height
+            ]
+        )
+        cax.set_frame_on(False)
+        plt.colorbar(pc, cax=cax, format=ScalarFormatter())
+
+        cax.set_yticks([0 + (grid_max / 9), grid_max - (grid_max / 9)])
+        cax.set_yticklabels(["0", str(int(grid_max))])
+        cax.tick_params(axis="y", which="major", pad=0, width=0)
+
+        title_font_dict = {'fontsize': 24,
+                           'fontfamily': 'sans-serif',
+                           'fontweight': 'bold'}
+        ax.set_title(self.name, fontdict=title_font_dict, pad=10, loc='left')
 
         fig.show()
