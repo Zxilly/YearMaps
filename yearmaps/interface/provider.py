@@ -160,6 +160,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         grid, months = fulfill_data()
         mpl.rcParams['font.family'] = 'Consolas'
+        mpl.rcParams['svg.fonttype'] = 'none'
 
         c_map = PolarisationColorMap(self.colors)
 
