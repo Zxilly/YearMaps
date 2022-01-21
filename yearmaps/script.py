@@ -17,8 +17,8 @@ from yearmaps.utils.file import default_data_dir
               help='File type to export')
 @click.option('--mode', '-m', default='till_now', type=click.Choice(['till_now', 'year']), show_default=True,
               help='Generate mode of the program')
-@click.option('--year', '-y', default=datetime.now().year, type=int, show_default=True,
-              help='Year to generate, this options depends on mode=year')
+@click.option('--year', '-y', default=1900, type=int, show_default=True,
+              help='Year to generate, this options will override mode to "year"')
 @click.pass_context
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int):
     ctx.ensure_object(dict)
@@ -26,6 +26,9 @@ def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode
     obj[Config.DATA_DIR] = data_dir
     obj[Config.OUTPUT_DIR] = output_dir
     obj[Config.FILE_TYPE] = file_type
+    if year != 1900:
+        if mode == 'till_now':
+            mode = 'year'
     if mode == 'year':
         obj[Config.MODE] = mode
         obj[Config.YEAR] = year
