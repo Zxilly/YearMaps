@@ -26,7 +26,7 @@ class BBDCProvider(Provider, ABC):
 
     name = "不背单词"
     id = "bbdc"
-    colors = orange
+    color = orange
 
     def __init__(self, uid: str):
         self.uid = uid

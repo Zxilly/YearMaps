@@ -4,6 +4,7 @@ import click
 
 from yearmaps.constant import Config
 from yearmaps.providers import providers
+from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import default_data_dir
 
 
@@ -18,13 +19,16 @@ from yearmaps.utils.file import default_data_dir
               help='Generate mode of the program')
 @click.option('--year', '-y', default=1900, type=int, show_default=True,
               help='Year to generate, this option will override mode to "year"')
+@click.option('--color', '-c', default='none', type=click.Choice(color_list.keys()), show_default=True,
+              help='Color to override provider default color')
 @click.pass_context
-def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int):
+def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int, color: str):
     ctx.ensure_object(dict)
     obj = ctx.obj
     obj[Config.DATA_DIR] = data_dir
     obj[Config.OUTPUT_DIR] = output_dir
     obj[Config.FILE_TYPE] = file_type
+    obj[Config.COLOR] = color
     if year != 1900:
         if mode == 'till_now':
             mode = 'year'

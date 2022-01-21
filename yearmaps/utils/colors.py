@@ -56,3 +56,25 @@ brown = ["#efebe9", "#d7ccc8", "#bcaaa4", "#a1887f", "#8d6e63", "#795548", "#6d4
 grey = ["#fafafa", "#f5f5f5", "#eeeeee", "#e0e0e0", "#bdbdbd", "#9e9e9e", "#757575", "#616161", "#424242", "#212121"]
 bluegrey = ["#eceff1", "#cfd8dc", "#b0bec5", "#90a4ae", "#78909c", "#607d8b", "#546e7a", "#455a64", "#37474f",
             "#263238"]
+
+color_list = {
+    'red': red,
+    'pink': pink,
+    'purple': purple,
+    'deeppurple': deeppurple,
+    'indigo': indigo,
+    'blue': blue,
+    'lightblue': lightblue,
+    'cyan': cyan,
+    'teal': teal,
+    'green': green,
+    'lightgreen': lightgreen,
+    'lime': lime,
+    'yellow': yellow,
+    'amber': amber,
+    'orange': orange,
+    'deeporange': deeporange,
+    'brown': brown,
+    'grey': grey,
+    'bluegrey': bluegrey
+}

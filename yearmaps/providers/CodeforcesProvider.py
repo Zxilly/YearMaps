@@ -17,7 +17,7 @@ ENDPOINT_URL = "https://codeforces.com/api/user.status?handle={user}"
 class CodeforcesProvider(Provider, ABC):
     name = "Codeforces"
     id = "cf"
-    colors = purple
+    color = purple
 
     def __init__(self, user: str):
         self.user = user

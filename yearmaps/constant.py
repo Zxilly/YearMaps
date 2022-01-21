@@ -9,6 +9,7 @@ class Config(Enum):
     MODE = "mode"
     YEAR = "year"
     FILE_TYPE = "file_type"
+    COLOR = "color"
 
 
 ONE_DAY = timedelta(days=1)

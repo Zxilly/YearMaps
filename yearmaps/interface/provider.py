@@ -19,7 +19,7 @@ from matplotlib.transforms import Bbox
 from yearmaps import utils
 from yearmaps.constant import Config, ONE_DAY
 from yearmaps.utils import YearData
-from yearmaps.utils.colors import PolarisationColorMap
+from yearmaps.utils.colors import PolarisationColorMap, color_list
 from yearmaps.utils.util import date_range
 
 
@@ -46,10 +46,10 @@ class ProviderInfo(ABC):
     def id(self) -> str:
         pass
 
-    # Render colors, should have 10 items
+    # Render color, should have 10 items
     @property
     @abstractmethod
-    def colors(self) -> List[str]:
+    def color(self) -> List[str]:
         pass
 
     # Global group options
@@ -178,7 +178,12 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         grid_max = np.nanmax(grid)
         grid_sum = np.nansum(grid)
 
-        c_map = PolarisationColorMap(self.colors, grid_max == 0)
+        color = self.options[Config.COLOR]
+        if color == 'none':
+            color = self.color
+        else:
+            color = color_list[color]
+        c_map = PolarisationColorMap(color, grid_max == 0)
 
         fig_size = (10, 3)
         fig, ax = plt.subplots(figsize=fig_size, dpi=400)

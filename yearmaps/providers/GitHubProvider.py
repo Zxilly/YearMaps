@@ -33,7 +33,7 @@ query ($user: String!,$start: DateTime) {
 class GitHubProvider(Provider, ABC):
     id = "github"
     name = "GitHub"
-    colors = blue
+    color = blue
 
     def __init__(self, user: str, token: str):
         self.user = user
