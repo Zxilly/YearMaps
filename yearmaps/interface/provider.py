@@ -16,6 +16,7 @@ from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
 
+from yearmaps import utils
 from yearmaps.constant import Config, ONE_DAY
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import PolarisationColorMap
@@ -239,13 +240,31 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             'fontfamily': 'Microsoft YaHei',
         }
 
+        year_font_dict = {
+            **hint_font_dict,
+            'fontsize': 28,
+            'color': '#A9A9A9',
+            'fontweight': 'bold'
+        }
+
         ax.text(1, 1.25, f"{self.dtype(grid_sum)} {self.unit}",
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 fontdict=hint_font_dict,
                 transform=ax.transAxes)
 
+        if self.options[Config.MODE] == 'year':
+            ax.text(-0.075, 0.6, f"{self.options[Config.YEAR]}",
+                    horizontalalignment='center',
+                    verticalalignment='center',
+                    fontdict=year_font_dict,
+                    rotation=90,
+                    transform=ax.transAxes)
+
         file_type = self.options[Config.FILE_TYPE]
+
+        if utils.util.is_debug():
+            plt.show()
 
         path = Path(self.options[Config.OUTPUT_DIR]) / f"{self.id}.{file_type}"
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)
