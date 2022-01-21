@@ -52,7 +52,7 @@ class CodeforcesACProvider(CodeforcesProvider):
 
 
 class CodeforcesAllProvider(CodeforcesProvider):
-    unit = "All Problems"
+    unit = "Problems"
 
     def process(self, raw: Any) -> YearData:
         d = defaultdict(int)
