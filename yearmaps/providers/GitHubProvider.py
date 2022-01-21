@@ -54,7 +54,7 @@ class GitHubProvider(Provider, ABC):
 
 
 class GitHubContribProvider(GitHubProvider):
-    unit = "contribution"
+    unit = "Contribution"
 
     def access(self) -> Any:
         resp = requests.post(ENDPOINT_URL, json={

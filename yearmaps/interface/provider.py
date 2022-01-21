@@ -16,7 +16,7 @@ from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
 
-from yearmaps.constant import config, ONE_DAY
+from yearmaps.constant import Config, ONE_DAY
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import PolarisationColorMap
 from yearmaps.utils.util import date_range
@@ -77,7 +77,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # Read cache
     def read_data_file(self) -> Dict:
-        data_file = Path(self.options[config.DATA_DIR]) / f"{self.id}.json"
+        data_file = Path(self.options[Config.DATA_DIR]) / f"{self.id}.json"
         if not data_file.exists():
             return {}
         with open(data_file, "r", encoding='UTF-8') as f:
@@ -86,7 +86,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # Write cache
     def write_data_file(self, cache: Any):
-        cache_file = Path(self.options[config.DATA_DIR]) / f"{self.id}.json"
+        cache_file = Path(self.options[Config.DATA_DIR]) / f"{self.id}.json"
         with open(cache_file, "w", encoding='UTF-8') as f:
             json.dump(cache, f)
 
@@ -96,17 +96,17 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # The start date under current mode
     def start_date(self):
-        mode = self.options[config.MODE]
+        mode = self.options[Config.MODE]
         if mode == 'year':
-            return datetime.date(self.options[config.YEAR], 1, 1)
+            return datetime.date(self.options[Config.YEAR], 1, 1)
         else:
             return datetime.date.today() - datetime.timedelta(days=366)
 
     # The end date under current mode
     def end_date(self):
-        mode = self.options[config.MODE]
+        mode = self.options[Config.MODE]
         if mode == 'year':
-            return datetime.date(self.options[config.YEAR], 12, 31)
+            return datetime.date(self.options[Config.YEAR], 12, 31)
         else:
             return datetime.date.today()
 
@@ -245,7 +245,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 fontdict=hint_font_dict,
                 transform=ax.transAxes)
 
-        file_type = self.options[config.FILE_TYPE]
+        file_type = self.options[Config.FILE_TYPE]
 
-        path = Path(self.options[config.OUTPUT_DIR]) / f"{self.id}.{file_type}"
+        path = Path(self.options[Config.OUTPUT_DIR]) / f"{self.id}.{file_type}"
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)

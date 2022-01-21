@@ -3,7 +3,7 @@ from datetime import datetime
 
 import click
 
-from yearmaps.constant import config
+from yearmaps.constant import Config
 from yearmaps.providers import providers
 from yearmaps.utils.file import default_data_dir
 
@@ -23,14 +23,14 @@ from yearmaps.utils.file import default_data_dir
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int):
     ctx.ensure_object(dict)
     obj = ctx.obj
-    obj[config.DATA_DIR] = data_dir
-    obj[config.OUTPUT_DIR] = output_dir
-    obj[config.FILE_TYPE] = file_type
+    obj[Config.DATA_DIR] = data_dir
+    obj[Config.OUTPUT_DIR] = output_dir
+    obj[Config.FILE_TYPE] = file_type
     if mode == 'year':
-        obj[config.MODE] = mode
-        obj[config.YEAR] = year
+        obj[Config.MODE] = mode
+        obj[Config.YEAR] = year
     else:
-        obj[config.MODE] = mode
+        obj[Config.MODE] = mode
 
 
 def main():
