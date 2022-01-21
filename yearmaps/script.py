@@ -19,7 +19,7 @@ from yearmaps.utils.file import default_data_dir
               help='Generate mode of the program')
 @click.option('--year', '-y', default=1900, type=int, show_default=True,
               help='Year to generate, this option will override mode to "year"')
-@click.option('--color', '-c', default='none', type=click.Choice(color_list.keys()), show_default=True,
+@click.option('--color', '-c', default='none', type=click.Choice([*color_list.keys(), 'none']), show_default=True,
               help='Color to override provider default color')
 @click.pass_context
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int, color: str):
