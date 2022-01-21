@@ -155,15 +155,22 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 empty_grid[get_day(date)][get_week(date)] = value
 
             month_list = np.linspace(-1, -1, weeks, dtype=int)
+            year_tuple = (0, 0)
+            current_year = None
             for date in date_range(start, end):
                 date: datetime.date
                 if np.isnan(empty_grid[get_day(date)][get_week(date)]):
                     empty_grid[get_day(date)][get_week(date)] = 0
                 if date.weekday() == 0:
                     month_list[get_week(date)] = date.month
-            return empty_grid, month_list
+                if date.weekday() == 6:
+                    if current_year is None:
+                        current_year = date.year
+                    elif current_year != date.year:
+                        year_tuple = (date.year, get_week(date))
+            return empty_grid, month_list, year_tuple
 
-        grid, months = fulfill_data()
+        grid, months, (year, year_loc) = fulfill_data()
 
         mpl.rcParams['font.family'] = 'Consolas'
         mpl.rcParams['svg.fonttype'] = 'none'
@@ -185,6 +192,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         # add weekdays label
         ax.tick_params(axis="y", which="major", pad=1, width=0, colors='#24292f')
+
         ax.set_yticks([x + 0.5 for x in range(1, 6, 2)])
         ax.set_yticklabels(
             ['Tue', 'Thu', 'Sat'],
@@ -208,10 +216,17 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             month_locs.pop()
             month_labels.pop()
 
-        ax.tick_params(axis="x", which="major", pad=0, width=0, color='#24292f')
+        ax.tick_params(axis="x", which="major", pad=1, width=0, color='#24292f')
         ax.set_xticks(month_locs)
         ax.set_xticklabels(month_labels, ha="center")
         ax.xaxis.tick_top()
+
+        if self.options[Config.MODE] == 'till_now':
+            se_cax = ax.secondary_xaxis('bottom')
+            se_cax.set_xticks([year_loc])
+            se_cax.set_xticklabels([year])
+            se_cax.tick_params(axis="x", pad=0, width=0, color='#24292f')
+            se_cax.set_frame_on(False)
 
         ax.set_frame_on(False)
 
