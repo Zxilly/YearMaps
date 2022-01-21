@@ -32,6 +32,7 @@ Options:
 
 Commands:
   bbdc    不背单词
+  blbl    bilibili
   cf      Codeforces
   github  GitHub
 ```
@@ -55,6 +56,25 @@ Options:
 
 ![bbdc](https://user-images.githubusercontent.com/31370133/150357416-36b3bd83-aa8c-4065-aabb-f130f0392476.png)
 
+</details>
+
+### bilibili
+
+<details>
+  
+```bash
+Usage: yearmaps blbl [OPTIONS]
+
+  bilibili
+
+Options:
+  -i, --id TEXT       bilibili uid  [required]
+  -t, --type [video]  图数据类型
+  --help              Show this message and exit.
+```
+  
+![image](https://user-images.githubusercontent.com/50107074/150572220-781dd51f-fd9c-47cf-b78a-cac1def2fd91.png)
+  
 </details>
 
 ### Codeforces
