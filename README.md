@@ -25,14 +25,14 @@ Options:
                                   till_now]
   -y, --year INTEGER              Year to generate, this option will override
                                   mode to "year"  [default: 1900]
-  -c, --color [red|pink|purple|deeppurple|indigo|blue|lightblue|cyan|teal|green|lightgreen|lime|yellow|amber|orange|deeporange|brown|grey|bluegrey]
+  -c, --color [red|pink|purple|deeppurple|indigo|blue|lightblue|cyan|teal|green|lightgreen|lime|yellow|amber|orange|deeporange|brown|grey|bluegrey|none]
                                   Color to override provider default color
                                   [default: none]
   --help                          Show this message and exit.
 
 Commands:
   bbdc    不背单词
-  blbl    bilibili
+  bili    Bilibili
   cf      Codeforces
   github  GitHub
 ```
@@ -63,7 +63,7 @@ Options:
 <details>
   
 ```bash
-Usage: yearmaps blbl [OPTIONS]
+Usage: yearmaps bili [OPTIONS]
 
   bilibili
 

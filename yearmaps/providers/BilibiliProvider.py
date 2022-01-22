@@ -16,7 +16,7 @@ ENDPOINT_URL = "http://api.bilibili.com/x/space/arc/search?mid={uid}&ps=50&pn={p
 
 class BilibiliProvider(Provider, ABC):
     name = "bilibili"
-    id = "blbl"
+    id = "bili"
     color = pink
 
     def __init__(self, uid: str):
@@ -35,7 +35,7 @@ class BilibiliProvider(Provider, ABC):
         return data_ret
 
     @staticmethod
-    @click.command("blbl", help="bilibili")
+    @click.command("bili", help="Bilibili")
     @click.option("--id", "-i", "uid", type=str, required=True, help="bilibili uid")
     @click.option("--type", "-t", "gtype", type=click.Choice(("video",)), default="video", help="图数据类型")
     @click.pass_context
