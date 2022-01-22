@@ -17,9 +17,9 @@ from yearmaps.utils.file import default_data_dir
               help='File type to export')
 @click.option('--mode', '-m', default='till_now', type=click.Choice(['till_now', 'year']), show_default=True,
               help='Generate mode of the program')
-@click.option('--year', '-y', default=1900, type=int, show_default=True,
+@click.option('--year', '-y', type=int,
               help='Year to generate, this option will override mode to "year"')
-@click.option('--color', '-c', default='none', type=click.Choice([*color_list.keys(), 'none']), show_default=True,
+@click.option('--color', '-c', type=click.Choice([*color_list.keys(), 'none']),
               help='Color to override provider default color')
 @click.pass_context
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int, color: str):
@@ -29,7 +29,7 @@ def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode
     obj[Config.OUTPUT_DIR] = output_dir
     obj[Config.FILE_TYPE] = file_type
     obj[Config.COLOR] = color
-    if year != 1900:
+    if year is not None:
         if mode == 'till_now':
             mode = 'year'
     if mode == 'year':

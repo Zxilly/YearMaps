@@ -179,11 +179,16 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         grid_sum = np.nansum(grid)
 
         color = self.options[Config.COLOR]
-        if color == 'none':
+        if color is None:
             color = self.color
         else:
             color = color_list[color]
-        c_map = PolarisationColorMap(color, grid_max == 0)
+
+        if self.dtype == int:
+            color_need = int(grid_max)
+        else:
+            color_need = -1
+        c_map = PolarisationColorMap(color, color_need, grid_max == 0)
 
         fig_size = (10, 3)
         fig, ax = plt.subplots(figsize=fig_size, dpi=400)

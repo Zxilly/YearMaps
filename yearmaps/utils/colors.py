@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy
 from matplotlib.colors import ListedColormap, to_rgba_array
 import numpy as np
@@ -5,11 +7,16 @@ import click
 
 
 class PolarisationColorMap(ListedColormap):
-    def __init__(self, colors, full_zero=False):
+    def __init__(self, colors: List[str], color_need: int, full_zero=False):
         colors = colors.copy()
         self.zero_color = to_rgba_array(colors[0])
         self.full_zero = full_zero
         colors.pop(0)
+        if color_need != -1:
+            if color_need == 0:
+                colors = colors[:1]
+            else:
+                colors = colors[:color_need]
         super().__init__(colors)
 
     # noinspection PyShadowingBuiltins
