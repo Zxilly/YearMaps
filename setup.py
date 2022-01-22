@@ -23,7 +23,7 @@ setup(
     url="https://github.com/Zxilly/YearMaps",
     license="GPLv3",
     license_file="LICENSE",
-    version="0.0.3",
+    version="0.0.4",
     description="Generate heat map of a year.",
     long_description=long_description,
     long_description_content_type="text/markdown",
