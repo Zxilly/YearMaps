@@ -13,7 +13,7 @@ pip[3] install --user yearmaps
 # 使用
 
 ```bash
-Usage: script.py [OPTIONS] COMMAND [ARGS]...
+Usage: yearmaps [OPTIONS] COMMAND [ARGS]...
 
 Options:
   -d, --data-dir TEXT             Directory to store datas  [default:
@@ -24,10 +24,9 @@ Options:
   -m, --mode [till_now|year]      Generate mode of the program  [default:
                                   till_now]
   -y, --year INTEGER              Year to generate, this option will override
-                                  mode to "year"  [default: 1900]
-  -c, --color [red|pink|purple|deeppurple|indigo|blue|lightblue|cyan|teal|green|lightgreen|lime|yellow|amber|orange|deeporange|brown|grey|bluegrey|none]
+                                  mode to "year"
+  -c, --color [red|pink|purple|deeppurple|indigo|blue|lightblue|cyan|teal|green|lightgreen|lime|yellow|amber|orange|deeporange|brown|grey|bluegrey]
                                   Color to override provider default color
-                                  [default: none]
   --help                          Show this message and exit.
 
 Commands:
