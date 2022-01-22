@@ -2,11 +2,11 @@
 name = "yearmaps"
 version = "0.0.4"
 description = "Generate heat map of a year."
-authors = ["Zxilly <zhouxinyu1001@gmail.com>"]
+authors = ["Zxilly <zxilly@outlook.com>"]
 license = "GPLv3"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 requests = "^2.27.1"
 click = "^8.0.3"
 matplotlib = "^3.5.1"
