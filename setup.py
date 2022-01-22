@@ -32,7 +32,8 @@ setup(
     install_requires=required,
     dependency_links=dependency_links,
     entry_points={
-        "console_scripts": ["yearmaps = yearmaps.script:main"]
+        "console_scripts": ["yearmaps = yearmaps.script:main",
+                            "yearmaps-server = yearmaps.server:main"]
     },
     classifiers=[
         "Programming Language :: Python :: 3",
