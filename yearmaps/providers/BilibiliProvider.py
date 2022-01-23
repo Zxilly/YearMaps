@@ -36,8 +36,8 @@ class BilibiliProvider(Provider, ABC):
 
     @staticmethod
     @click.command("bili", help="Bilibili")
-    @click.option("--id", "-i", "uid", type=str, required=True, help="bilibili uid")
-    @click.option("--type", "-t", "gtype", type=click.Choice(("video",)), default="video", help="图数据类型")
+    @click.option("--uid", "-i", "uid", type=str, required=True, help="bilibili uid")
+    @click.option("--gtype", "-t", "gtype", type=click.Choice(("video",)), default="video", help="图数据类型")
     @click.pass_context
     def command(ctx: click.Context, uid: str, gtype: str):
         if gtype == "video":

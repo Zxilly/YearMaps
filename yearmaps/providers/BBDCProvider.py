@@ -78,8 +78,8 @@ class BBDCProvider(Provider, ABC):
 
     @staticmethod
     @click.command('bbdc', help="不背单词")
-    @click.option('--id', '-i', 'uid', type=str, required=True, help='不背单词用户 ID')
-    @click.option('--type', '-t', 'gtype', type=click.Choice(['time', 'word']), default='time', help='图数据类型')
+    @click.option('--uid', '-i', 'uid', type=str, required=True, help='不背单词用户 ID')
+    @click.option('--gtype', '-t', 'gtype', type=click.Choice(['time', 'word']), default='time', help='图数据类型')
     @click.pass_context
     def command(ctx: click.Context, uid: str, gtype: str):
         if gtype == 'time':

@@ -28,7 +28,7 @@ class CodeforcesProvider(Provider, ABC):
     @staticmethod
     @click.command("cf", help="Codeforces")
     @click.option("--user", "-u", type=str, required=True, help="Codeforces user name")
-    @click.option("--type", "-t", "gtype", type=click.Choice(("all", "ac")), default="all", help="图数据类型")
+    @click.option("--gtype", "-t", "gtype", type=click.Choice(("all", "ac")), default="all", help="图数据类型")
     @click.pass_context
     def command(ctx: click.Context, user: str, gtype: str):
         if gtype == "all":

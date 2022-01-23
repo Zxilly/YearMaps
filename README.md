@@ -45,7 +45,7 @@ Usage: yearmaps bbdc [OPTIONS]
 
 Options:
   -i, --id TEXT           不背单词用户 ID  [required]
-  -t, --type [time|word]  图数据类型
+  -t, --gtype [time|word] 图数据类型
   --help                  Show this message and exit.
 ```
 
@@ -64,7 +64,7 @@ Usage: yearmaps bili [OPTIONS]
 
 Options:
   -i, --id TEXT       bilibili uid  [required]
-  -t, --type [video]  图数据类型
+  -t, --gtype [video] 图数据类型
   --help              Show this message and exit.
 ```
   
@@ -83,7 +83,7 @@ Usage: yearmaps cf [OPTIONS]
 
 Options:
   -u, --user TEXT      Codeforces user name  [required]
-  -t, --type [all|ac]  图数据类型
+  -t, --gtype [all|ac] 图数据类型
   --help               Show this message and exit.
 ```
 
@@ -104,7 +104,7 @@ Usage: yearmaps github [OPTIONS]
 Options:
   -u, --user TEXT       GitHub user name  [required]
   -k, --token TEXT      GitHub access token  [required]
-  -t, --type [contrib]  图数据类型
+  -t, --gtype [contrib] 图数据类型
   --help                Show this message and exit.
 ```
 

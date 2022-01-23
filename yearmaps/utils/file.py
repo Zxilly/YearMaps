@@ -1,10 +1,15 @@
 from pathlib import Path
+from typing import Union
 
 from yearmaps.utils.error import ProviderError
 
 
-def ensure_dir(dir_: Path) -> Path:
+def ensure_dir(dir_: Union[Path, str]) -> Path:
+    if isinstance(dir_, str):
+        dir_ = Path(dir_)
     if not dir_.exists():
+        if not dir_.parent.exists():
+            raise FileExistsError(f"Parent directory of {dir_} does not exist")
         dir_.mkdir()
         return dir_
     else:

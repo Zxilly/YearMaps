@@ -2,6 +2,7 @@ import calendar
 import datetime
 import json
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, List, Callable
 
@@ -20,7 +21,7 @@ from yearmaps import utils
 from yearmaps.constant import Config, ONE_DAY
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import PolarisationColorMap, color_list
-from yearmaps.utils.util import date_range
+from yearmaps.utils.util import date_range, get_filename
 
 
 class ProviderInfo(ABC):
@@ -291,5 +292,5 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         if utils.util.is_debug():
             plt.show()
 
-        path = Path(self.options[Config.OUTPUT_DIR]) / f"{self.id}.{file_type}"
+        path = Path(self.options[Config.OUTPUT_DIR]) / get_filename(self.id, file_type)
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)

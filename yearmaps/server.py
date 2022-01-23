@@ -5,9 +5,11 @@ from typing import Dict, List
 import click
 import yaml
 
+from yearmaps.interface.task import Task
 from yearmaps.providers import providers
 from yearmaps.utils import file
 from yearmaps.constant import Config
+from yearmaps.utils.file import ensure_dir
 
 
 @click.command()
@@ -32,22 +34,23 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         config_dict['host'] = host
     if port is not None:
         config_dict['port'] = port
-    values = {
-        'host': '0.0.0.0',
-        'port': 5000,
-        'data-dir': file.default_data_dir(),
-        'cache-dir': file.default_cache_dir(),
-    }
-    for key in values.keys():
-        if key in config_dict.keys():
-            values[key] = config_dict[key]
+
+    if 'data-dir' not in config_dict.keys():
+        config_dict['data-dir'] = file.default_data_dir()
+    if 'cache-dir' not in config_dict.keys():
+        config_dict['cache-dir'] = file.default_cache_dir()
+
+    ensure_dir(config_dict['data-dir'])
+
+    obj[Config.DATA_DIR] = config_dict['data-dir']
+    obj[Config.OUTPUT_DIR] = config_dict['cache-dir']
 
     # Check provider config
     if 'providers' not in config_dict.keys():
         raise KeyError('Providers not found in config file.')
 
     if not isinstance(config_dict['providers'], Dict):
-        raise TypeError('Providers must be a dict.')
+        raise TypeError('Providers must have arguments.')
 
     # Build required params for each provider
     provider_required_params = {}
@@ -68,9 +71,26 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         if not isinstance(provider_config, Dict):
             raise TypeError(f'Provider {key} must be a dict.')
 
-        if set(provider_config.keys()) < set(provider_required_params[key]):
-            raise KeyError(f'Provider {key} is missing required params: {provider_required_params[key]}')
+        if not set(provider_config.keys()).issuperset(set(provider_required_params[key])):
+            raise KeyError(
+                'Provider {key} is missing required params: '
+                f'{set(provider_required_params[key]) - set(provider_config.keys())}')
 
+    provider_map = {}
+    for provider in providers:
+        name = provider.command.name
+        provider_map[name] = provider
+
+    task_list: List[Task] = []
+    for provider_key, provider_config in config_dict['providers'].items():
+        if 'global' in provider_config.keys():
+            global_config = provider_config['global']
+        else:
+            global_config = {}
+        task = Task(ctx, provider_map[provider_key].command, global_config, provider_config)
+        task_list.append(task)
+        for task in task_list:
+            task.run()
 
 
 if __name__ == '__main__':
