@@ -79,3 +79,5 @@ dmypy.json
 cython_debug/
 /*.svg
 /*.png
+
+yearmaps.yml

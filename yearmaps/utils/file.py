@@ -20,3 +20,9 @@ def default_data_dir() -> Path:
         raise ProviderError("No home directory found")
     data_dir = home / ".yearmaps"
     return ensure_dir(data_dir)
+
+
+def default_cache_dir() -> Path:
+    data_dir = default_data_dir()
+    cache_dir = data_dir / "cache"
+    return ensure_dir(cache_dir)

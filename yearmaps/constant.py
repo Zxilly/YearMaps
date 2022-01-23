@@ -11,5 +11,7 @@ class Config(Enum):
     FILE_TYPE = "file_type"
     COLOR = "color"
 
+    SERVER = "server"
+
 
 ONE_DAY = timedelta(days=1)
