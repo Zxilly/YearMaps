@@ -135,8 +135,9 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         task = Task(ctx, provider_map[provider_key].command, global_config, provider_config)
         task_list.append(task)
 
+    # FIXME: run in another thread
     for task in task_list:
-        task.run()
+        task.ensure_cache()
 
 
 if __name__ == '__main__':

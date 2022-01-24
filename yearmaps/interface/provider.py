@@ -112,15 +112,19 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         else:
             return datetime.date.today()
 
+    def echo(self, msg: str):
+        if not self.options.get(Config.SERVER, False):
+            click.echo(msg)
+
     # Render utils to output
     def render(self, options: Dict[str, Any]):
         self.options = options
-        click.echo(f"Start access {self.name} data...")
+        self.echo(f"Start access {self.name} data...")
         raw = self.access()
-        click.echo("End access data.")
-        click.echo(f"Start process {self.name} data...")
+        self.echo("End access data.")
+        self.echo(f"Start process {self.name} data...")
         data = self.process(raw)
-        click.echo("End process data.")
+        self.echo("End process data.")
 
         def fulfill_data() -> np:
             start = self.start_date()
