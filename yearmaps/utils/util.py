@@ -14,7 +14,7 @@ def is_debug():
     return os.environ.get('DEBUG', 'False') != 'False'
 
 
-def get_filename(provider: str, obj: Dict):
-    if str(Config.SERVER) in obj:
-        return f"{provider}.{obj[Config.COLOR]}.{obj[Config.MODE]}.{obj[Config.YEAR]}.{obj[Config.FILE_TYPE]}"
-    return f"{provider}.{obj[Config.FILE_TYPE]}"
+def get_filename(provider_id: str, obj: Dict):
+    if obj.get(Config.SERVER, False):
+        return f"{provider_id}.{obj[Config.COLOR]}.{obj[Config.MODE]}.{obj[Config.YEAR]}.{obj[Config.FILE_TYPE]}"
+    return f"{provider_id}.{obj[Config.FILE_TYPE]}"

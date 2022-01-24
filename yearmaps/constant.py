@@ -4,14 +4,14 @@ from enum import Enum, unique
 
 @unique
 class Config(Enum):
-    DATA_DIR = "data_dir"
-    OUTPUT_DIR = "output_dir"
-    MODE = "mode"
-    YEAR = "year"
-    FILE_TYPE = "file_type"
-    COLOR = "color"
+    DATA_DIR = "data_dir"  # necessary
+    OUTPUT_DIR = "output_dir"  # necessary
+    MODE = "mode"  # necessary
+    YEAR = "year"  # optional
+    FILE_TYPE = "file_type"  # necessary
+    COLOR = "color"  # optional
 
-    SERVER = "server"
+    SERVER = "server"  # optional
 
 
 ONE_DAY = timedelta(days=1)

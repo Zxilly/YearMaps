@@ -81,3 +81,5 @@ cython_debug/
 /*.png
 
 yearmaps.yml
+data/
+cache/
