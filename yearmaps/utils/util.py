@@ -15,10 +15,22 @@ def is_debug():
 
 
 def get_filename(provider_id: str, obj: Dict):
-    return get_file_prefix(provider_id, obj) + obj[Config.FILE_TYPE]
+    return get_file_prefix(provider_id, obj) + '.' + obj[Config.FILE_TYPE]
 
 
 def get_file_prefix(provider_id: str, obj: Dict):
     if obj.get(Config.SERVER, False):
-        return f"{provider_id}.{obj[Config.COLOR]}.{obj[Config.MODE]}.{obj[Config.YEAR]}"
+        return f"{get_file_identifier(provider_id, obj)}.{date_encode()}"
     return f"{provider_id}"
+
+
+def get_file_identifier(provider_id: str, obj: Dict):
+    return f"{provider_id}.{obj[Config.COLOR]}.{obj[Config.MODE]}.{obj[Config.YEAR]}"
+
+
+def date_encode():
+    return date.today().strftime("%Y%m%d")
+
+
+def date_decode(date_str: str):
+    return date(int(date_str[:4]), int(date_str[4:6]), int(date_str[6:]))

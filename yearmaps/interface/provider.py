@@ -293,8 +293,5 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         file_type = self.options[Config.FILE_TYPE]
 
-        if utils.util.is_debug():
-            plt.show()
-
         path = Path(self.options[Config.OUTPUT_DIR]) / get_filename(self.id, self.options)
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)

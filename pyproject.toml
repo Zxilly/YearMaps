@@ -21,6 +21,9 @@ click = "^8.0.3"
 matplotlib = "^3.5.1"
 numpy = "^1.22.1"
 PyYAML = "^6.0"
+"index.py" = "^0.21.11"
+uvicorn = "^0.17.0"
+schedule = "^1.1.0"
 
 [tool.poetry.scripts]
 yearmaps = "yearmaps.script:main"

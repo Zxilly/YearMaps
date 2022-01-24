@@ -7,7 +7,7 @@ from datetime import date
 import click
 
 from yearmaps.constant import Config
-from yearmaps.utils.util import get_file_prefix
+from yearmaps.utils.util import get_file_prefix, get_file_identifier
 
 
 class Task:
@@ -32,19 +32,26 @@ class Task:
                 return True
         return False
 
+    def cache_file_prefix(self) -> str:
+        return get_file_prefix(self.command.name, self.context.obj)
+
+    def cache_file_name_hash(self) -> str:
+        file_prefix = get_file_identifier(self.command.name, self.context.obj)
+        return hashlib.md5(file_prefix.encode('utf-8')).hexdigest()
+
     def server_name(self) -> str:
-        file_prefix = get_file_prefix(self.command.name, self.context.obj)
-        file_hash = hashlib.md5(file_prefix.encode('utf-8')).hexdigest()
+        file_hash = self.cache_file_name_hash()
         return f"{file_hash}.{self.context.obj[Config.FILE_TYPE]}"
 
     def cache_name(self) -> str:
-        file_prefix = get_file_prefix(self.command.name, self.context.obj)
+        file_prefix = self.cache_file_prefix()
         return f"{file_prefix}.{self.context.obj[Config.FILE_TYPE]}"
 
     def cache_path(self) -> Path:
         return Path(self.context.obj[Config.OUTPUT_DIR]) / self.cache_name()
 
-    def ensure_cache(self):
-        click.echo(f"Ensuring cache for {self.cache_name()}")
+    def ensure_cache(self, quiet=False):
+        if not quiet:
+            click.echo(f"Ensuring cache for {self.cache_name()}")
         if not self.cache_path().exists():
             self.run(force=True)

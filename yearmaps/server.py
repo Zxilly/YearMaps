@@ -1,15 +1,20 @@
 import os
+import threading
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
 import click
+import indexpy
+import uvicorn
 import yaml
+import schedule
 
+from yearmaps.constant import Config
 from yearmaps.interface.task import Task
 from yearmaps.providers import providers
 from yearmaps.utils import file
-from yearmaps.constant import Config
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import ensure_dir
 
@@ -132,13 +137,43 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                         raise ValueError(f'{value} is not a valid color.')
 
                 global_config[obj_key] = value
-        task = Task(ctx, provider_map[provider_key].command, global_config, provider_config)
-        task_list.append(task)
+        task_list.append(Task(ctx, provider_map[provider_key].command, global_config, provider_config))
 
-    # FIXME: run in another thread
+    def ensure_cache():
+        for queue_task in task_list:
+            queue_task.ensure_cache(quiet=True)
+
+    threading.Thread(target=ensure_cache).start()
+
+    schedule.every().day.at('01:00').do(ensure_cache)
+
+    def loop():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    regen = threading.Thread(target=loop)
+    regen.daemon = True
+    regen.start()
+
+    # Build tasks hash table
+    tasks_hash_table = {}
     for task in task_list:
-        task.ensure_cache()
+        click.echo(f'Valid task: {task.cache_file_prefix()} {task.cache_file_name_hash()}')
+        tasks_hash_table[task.cache_file_name_hash()] = task
 
+    @app.router.http('/{filehash}')
+    async def handler():
+        filehash = indexpy.request.path_params.get('filehash')
+        if filehash not in tasks_hash_table.keys():
+            return indexpy.HttpResponse(status_code=404)
+        return indexpy.FileResponse(filepath=str(tasks_hash_table[filehash].cache_path()))
+
+    # noinspection PyTypeChecker
+    uvicorn.run(app, host=config_dict['host'], port=config_dict['port'])
+
+
+app = indexpy.Index()
 
 if __name__ == '__main__':
     cli()
