@@ -107,12 +107,12 @@ class BBDCTimeProvider(BBDCProvider):
 class BBDCWordProvider(BBDCProvider):
     unit = "词"
 
-    def process(self, data: Any) -> Dict[int, YearData]:
+    def process(self, data: Any) -> YearData:
         result = dict()
         for date, day_data in data['utils'].items():
-            date = date.strptime(date, "%Y-%m-%d")
+            date = datetime.strptime(date, "%Y-%m-%d").date()
             if self.is_date_valid(date):
-                learn = day_data.get('learn', 0)
-                review = day_data.get('review', 0)
+                learn: int = day_data.get('learn', 0)
+                review: int = day_data.get('review', 0)
                 result[date] = learn + review
         return result
