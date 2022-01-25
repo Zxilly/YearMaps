@@ -180,7 +180,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         grid, months, (year, year_loc) = fulfill_data()
 
-        mpl.rcParams['font.family'] = 'Consolas'
+        mpl.rcParams['font.family'] = 'monospace'
         mpl.rcParams['svg.fonttype'] = 'none'
 
         grid_max = np.nanmax(grid)
@@ -264,13 +264,19 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         cax.set_yticklabels(["0", str(int(grid_max))])
         cax.tick_params(axis="y", which="major", pad=0, width=0)
 
+        if self.options[Config.FILE_TYPE] == 'svg':
+            font_family = 'sans-serif'
+        else:
+            import sys
+            font_family = sys.platform == 'win32' and 'Microsoft YaHei' or 'WenQuanYi Zen Hei'
+
         title_font_dict = {'fontsize': 30,
-                           'fontfamily': 'Microsoft YaHei',
+                           'fontfamily': font_family,
                            'fontweight': 'bold'}
         ax.set_title(self.name, fontdict=title_font_dict, pad=15, loc='left')
 
         hint_font_dict = {
-            'fontfamily': 'Microsoft YaHei',
+            'fontfamily': font_family,
         }
 
         year_font_dict = {
