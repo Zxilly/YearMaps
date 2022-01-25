@@ -44,7 +44,7 @@ class Task:
         return f"{file_hash}.{self.context.obj[Config.FILE_TYPE]}"
 
     def cache_name(self) -> str:
-        file_prefix = self.cache_file_prefix()
+        file_prefix = get_file_prefix(self.command.name, self.context.obj)
         return f"{file_prefix}.{self.context.obj[Config.FILE_TYPE]}"
 
     def cache_path(self) -> Path:
