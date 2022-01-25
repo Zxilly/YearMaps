@@ -1,13 +1,8 @@
-from datetime import timedelta, date
 import os
+from datetime import date
 from typing import Dict
 
 from yearmaps.constant import Config
-
-
-def date_range(start_date: date, end_date: date):
-    for n in range(int((end_date - start_date).days) + 1):
-        yield start_date + timedelta(n)
 
 
 def is_debug():
@@ -25,7 +20,9 @@ def get_file_prefix(provider_id: str, obj: Dict):
 
 
 def get_file_identifier(provider_id: str, obj: Dict):
-    return f"{provider_id}.{obj[Config.COLOR]}.{obj[Config.MODE]}.{obj[Config.YEAR]}"
+    color = obj.get(Config.COLOR) or 'default'
+    year = obj.get(Config.YEAR) or 9999
+    return f"{provider_id}.{color}.{obj[Config.MODE]}.{year}"
 
 
 def date_encode():

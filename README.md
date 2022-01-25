@@ -16,8 +16,8 @@ pip[3] install --user yearmaps
 Usage: yearmaps [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  -d, --data-dir TEXT             Directory to store datas  [default: ~\.yearmaps]
-  -o, --output-dir TEXT           Directory to store output  [default: current directory]
+  -d, --data-dir TEXT             Directory to store datas  [default: ~/.yearmaps]
+  -o, --output-dir TEXT           Directory to store output  [default: $(pwd)]
   -f, --file-type [svg|png]       File type to export  [default: svg]
   -m, --mode [till_now|year]      Generate mode of the program  [default: till_now]
   -y, --year INTEGER              Year to generate, this option will override mode to "year"
@@ -30,6 +30,16 @@ Commands:
   bili    Bilibili
   cf      Codeforces
   github  GitHub
+  
+# 服务器模式
+
+Usage: yearmaps-server [OPTIONS]
+
+Options:
+  -l, --host TEXT     Host to listen on.
+  -p, --port INTEGER  Port to listen on.
+  -f, --config TEXT   Path to config file.  [default: $(pwd)/yearmaps.yml]
+  --help              Show this message and exit.
 ```
 
 ## 子模块

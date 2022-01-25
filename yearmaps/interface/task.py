@@ -33,7 +33,7 @@ class Task:
         return False
 
     def cache_file_prefix(self) -> str:
-        return get_file_prefix(self.command.name, self.context.obj)
+        return get_file_identifier(self.command.name, self.context.obj)
 
     def cache_file_name_hash(self) -> str:
         file_prefix = get_file_identifier(self.command.name, self.context.obj)

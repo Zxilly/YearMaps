@@ -1,13 +1,13 @@
-from datetime import datetime
 from abc import ABC
-from typing import Any, List
+from datetime import datetime
+from typing import Any
 
 import click
 import requests
 
+from yearmaps.interface.provider import Provider
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import blue
-from yearmaps.interface.provider import Provider
 from yearmaps.utils.error import ProviderError
 
 ENDPOINT_URL = "https://api.github.com/graphql"

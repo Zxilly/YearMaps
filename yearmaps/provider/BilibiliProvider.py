@@ -11,7 +11,7 @@ from yearmaps.utils import YearData
 from yearmaps.utils.colors import pink
 from yearmaps.utils.error import ProviderError
 
-ENDPOINT_URL = "http://api.bilibili.com/x/space/arc/search?mid={uid}&ps=50&pn={pn}"
+ENDPOINT_URL = "https://api.bilibili.com/x/space/arc/search?mid={uid}&ps=50&pn={pn}"
 
 
 class BilibiliProvider(Provider, ABC):

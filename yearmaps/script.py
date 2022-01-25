@@ -3,7 +3,7 @@ import os
 import click
 
 from yearmaps.constant import Config
-from yearmaps.providers import providers
+from yearmaps.provider import providers
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import default_data_dir
 

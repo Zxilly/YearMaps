@@ -2,7 +2,6 @@ import calendar
 import datetime
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, List, Callable
 
@@ -17,11 +16,10 @@ from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
 
-from yearmaps import utils
 from yearmaps.constant import Config, ONE_DAY
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import PolarisationColorMap, color_list
-from yearmaps.utils.util import date_range, get_filename
+from yearmaps.utils.util import get_filename
 
 
 class ProviderInfo(ABC):
@@ -73,6 +71,11 @@ class ProviderInterface(ABC):
     @abstractmethod
     def command():
         pass
+
+
+def date_range(start_date: datetime.date, end_date: datetime.date):
+    for n in range(int((end_date - start_date).days) + 1):
+        yield start_date + datetime.timedelta(n)
 
 
 class Provider(ProviderInfo, ProviderInterface, ABC):

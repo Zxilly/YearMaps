@@ -13,14 +13,14 @@ import schedule
 
 from yearmaps.constant import Config
 from yearmaps.interface.task import Task
-from yearmaps.providers import providers
+from yearmaps.provider import providers, provider_map
 from yearmaps.utils import file
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import ensure_dir
 
 
 @click.command()
-@click.option('--host', '-h', default='0.0.0.0', type=str, help='Host to listen on.')
+@click.option('--host', '-l', default='0.0.0.0', type=str, help='Host to listen on.')
 @click.option('--port', '-p', default=5000, type=int, help='Port to listen on.')
 @click.option('--config', '-f', default=str(Path(os.getcwd()) / 'yearmaps.yml'), type=str, show_default=True,
               help='Path to config file.')
@@ -38,9 +38,9 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
     # Initialize server args
     # has default value from click
-    if config_dict['host'] is not None:
+    if host is not None:
         config_dict['host'] = host
-    if config_dict['port'] is not None:
+    if port is not None:
         config_dict['port'] = port
 
     # Initialize config from yaml
@@ -99,12 +99,6 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                 'Provider {key} is missing required params: '
                 f'{set(provider_required_params[key]) - set(provider_config.keys())}')
 
-    # Build provider map
-    provider_map = {}
-    for provider in providers:
-        name = provider.command.name
-        provider_map[name] = provider
-
     # Build tasks
     task_list: List[Task] = []
     for provider_key, provider_config in config_dict['providers'].items():
@@ -112,7 +106,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         if 'global' in provider_config.keys():
             if not isinstance(provider_config['global'], Dict):
                 raise TypeError('Global config must be a dict.')
-            for key, value in provider_config['global']:
+            for key, value in provider_config['global'].items():
                 try:
                     obj_key = Config(key)
                 except ValueError:
@@ -137,6 +131,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                         raise ValueError(f'{value} is not a valid color.')
 
                 global_config[obj_key] = value
+                provider_config.pop('global')
         task_list.append(Task(ctx, provider_map[provider_key].command, global_config, provider_config))
 
     def ensure_cache():
@@ -149,7 +144,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         for queue_task in task_list:
             queue_task.ensure_cache()
 
-    schedule.every().day.at('00:00').do(update_cache())
+    schedule.every().day.at('00:00').do(update_cache)
 
     def loop():
         while True:
