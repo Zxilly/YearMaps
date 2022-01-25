@@ -4,7 +4,7 @@ WORKDIR /app
 
 EXPOSE 5000/tcp
 
-RUN pip install yearmaps==0.0.6 && \
+RUN pip install yearmaps==0.0.7 && \
     apt-get update && \
     apt install -y fonts-wqy-zenhei && \
     rm -rf /var/lib/apt/lists/*
