@@ -145,12 +145,17 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
     threading.Thread(target=ensure_cache).start()
 
-    schedule.every().day.at('01:00').do(ensure_cache)
+    def update_cache():
+        for queue_task in task_list:
+            queue_task.ensure_cache()
+
+    schedule.every().day.at('00:00').do(update_cache())
 
     def loop():
         while True:
+            wait_time = schedule.idle_seconds()
+            time.sleep(wait_time)
             schedule.run_pending()
-            time.sleep(1)
 
     regen = threading.Thread(target=loop)
     regen.daemon = True
