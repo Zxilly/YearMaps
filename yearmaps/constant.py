@@ -1,17 +1,16 @@
+from dataclasses import dataclass
 from datetime import timedelta
-from enum import Enum, unique
 
 
-@unique
-class Config(Enum):
-    DATA_DIR = "data_dir"  # necessary
-    OUTPUT_DIR = "output_dir"  # necessary
-    MODE = "mode"  # necessary
-    YEAR = "year"  # optional
-    FILE_TYPE = "file_type"  # necessary
-    COLOR = "color"  # optional
-
-    SERVER = "server"  # optional
+@dataclass
+class Configs:
+    data_dir: str
+    output_dir: str
+    mode: str
+    file_type: str
+    year: int = None
+    color: str = None
+    server: bool = None
 
 
 ONE_DAY = timedelta(days=1)

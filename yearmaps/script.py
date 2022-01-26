@@ -2,7 +2,7 @@ import os
 
 import click
 
-from yearmaps.constant import Config
+from yearmaps.constant import Configs
 from yearmaps.provider import providers
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import default_data_dir
@@ -23,20 +23,15 @@ from yearmaps.utils.file import default_data_dir
               help='Color to override provider default color')
 @click.pass_context
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int, color: str):
-    ctx.ensure_object(dict)
+    ctx.obj = Configs(data_dir=data_dir, output_dir=output_dir, mode=mode, file_type=file_type, color=color)
     obj = ctx.obj
-    obj[Config.DATA_DIR] = data_dir
-    obj[Config.OUTPUT_DIR] = output_dir
-    obj[Config.FILE_TYPE] = file_type
-    obj[Config.COLOR] = color
-    if year is not None:
-        if mode == 'till_now':
-            mode = 'year'
     if mode == 'year':
-        obj[Config.MODE] = mode
-        obj[Config.YEAR] = year
-    else:
-        obj[Config.MODE] = mode
+        if year is None:
+            raise click.BadParameter('Year is required when mode is "year"')
+        obj.year = year
+    elif mode == 'till_now':
+        if year is not None:
+            click.echo('Year is not ignored when mode is "till_now"', err=True)
 
 
 def main():

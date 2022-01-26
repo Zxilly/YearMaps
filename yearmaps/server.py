@@ -11,7 +11,7 @@ import uvicorn
 import yaml
 import schedule
 
-from yearmaps.constant import Config
+from yearmaps.constant import Configs
 from yearmaps.interface.task import Task
 from yearmaps.provider import providers, provider_map
 from yearmaps.utils import file
@@ -20,16 +20,12 @@ from yearmaps.utils.file import ensure_dir
 
 
 @click.command()
-@click.option('--host', '-l', default='0.0.0.0', type=str, help='Host to listen on.')
-@click.option('--port', '-p', default=5000, type=int, help='Port to listen on.')
+@click.option('--host', '-l', default='0.0.0.0', show_default=True, type=str, help='Host to listen on.')
+@click.option('--port', '-p', default=5000, show_default=True, type=int, help='Port to listen on.')
 @click.option('--config', '-f', default=str(Path(os.getcwd()) / 'yearmaps.yml'), type=str, show_default=True,
               help='Path to config file.')
 @click.pass_context
 def cli(ctx: click.Context, host: str, port: int, config: str):
-    ctx.ensure_object(dict)
-    obj = ctx.obj
-    obj[Config.SERVER] = True
-
     # Load config
     if not Path(config).resolve().exists():
         raise FileNotFoundError(f'Config file not found: {config}')
@@ -60,12 +56,16 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     ensure_dir(config_dict['cache-dir'])
 
     # Copy yaml config to context object
-    obj[Config.DATA_DIR] = config_dict['data-dir']
-    obj[Config.OUTPUT_DIR] = config_dict['cache-dir']
-    obj[Config.MODE] = config_dict['mode']
-    obj[Config.YEAR] = config_dict.get('year', None)
-    obj[Config.FILE_TYPE] = config_dict['file_type']
-    obj[Config.COLOR] = config_dict.get('color', None)
+    ctx.obj = Configs(
+        data_dir=config_dict['data-dir'],
+        output_dir=config_dict['cache-dir'],
+        mode=config_dict['mode'],
+        year=config_dict['year'],
+        file_type=config_dict['file_type'],
+        color=config_dict.get('color', None)
+    )
+    obj = ctx.obj
+    obj.server = True
 
     # Check provider config
     if 'providers' not in config_dict.keys():
@@ -107,30 +107,28 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
             if not isinstance(provider_config['global'], Dict):
                 raise TypeError('Global config must be a dict.')
             for key, value in provider_config['global'].items():
-                try:
-                    obj_key = Config(key)
-                except ValueError:
-                    raise KeyError(f'{key} is not a valid global option.')
-
                 # Additional check for global config
-                if obj_key == Config.MODE:
-                    if value not in ['till_now', 'year']:
-                        raise ValueError(f'{value} is not a valid mode.')
-                elif obj_key == Config.YEAR:
-                    if not isinstance(value, int):
-                        raise TypeError('Year must be an integer.')
-                    if value < 2000 or value > datetime.now().year:
-                        raise ValueError(f'{value} is not a valid year.')
-                elif obj_key == Config.FILE_TYPE:
-                    if value not in ['png', 'svg']:
-                        raise ValueError(f'{value} is not a supported file type.')
-                elif obj_key == Config.COLOR:
-                    if not isinstance(value, str):
-                        raise TypeError('Color must be a string.')
-                    if value not in color_list.keys():
-                        raise ValueError(f'{value} is not a valid color.')
+                if not hasattr(obj, key):
+                    raise KeyError(f'{key} is not a valid global option.')
+                else:
+                    if key == 'mode':
+                        if value not in ['till_now', 'year']:
+                            raise ValueError(f'{value} is not a valid mode.')
+                    elif key == 'year':
+                        if not isinstance(value, int):
+                            raise TypeError('Year must be an integer.')
+                        if value < 2000 or value > datetime.now().year:
+                            raise ValueError(f'{value} is not a valid year.')
+                    elif key == 'file_type':
+                        if value not in ['png', 'svg']:
+                            raise ValueError(f'{value} is not a supported file type.')
+                    elif key == 'color':
+                        if not isinstance(value, str):
+                            raise TypeError('Color must be a string.')
+                        if value not in color_list.keys():
+                            raise ValueError(f'{value} is not a valid color.')
 
-                global_config[obj_key] = value
+                global_config[key] = value
                 provider_config.pop('global')
         task_list.append(Task(ctx, provider_map[provider_key].command, global_config, provider_config))
 

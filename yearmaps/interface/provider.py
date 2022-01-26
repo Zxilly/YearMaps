@@ -16,10 +16,9 @@ from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
 
-from yearmaps.constant import Config, ONE_DAY
+from yearmaps.constant import ONE_DAY, Configs
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import PolarisationColorMap, color_list
-from yearmaps.utils.util import get_filename
 
 
 class ProviderInfo(ABC):
@@ -52,7 +51,7 @@ class ProviderInfo(ABC):
         pass
 
     # Global group options
-    options: Dict[str, Any] = None
+    options: Configs = None
 
 
 class ProviderInterface(ABC):
@@ -82,7 +81,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # Read cache
     def read_data_file(self) -> Dict:
-        data_file = Path(self.options[Config.DATA_DIR]) / f"{self.id}.json"
+        data_file = Path(self.options.data_dir) / f"{self.id}.json"
         if not data_file.exists():
             return {}
         with open(data_file, "r", encoding='UTF-8') as f:
@@ -91,7 +90,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # Write cache
     def write_data_file(self, cache: Any):
-        cache_file = Path(self.options[Config.DATA_DIR]) / f"{self.id}.json"
+        cache_file = Path(self.options.data_dir) / f"{self.id}.json"
         with open(cache_file, "w", encoding='UTF-8') as f:
             json.dump(cache, f)
 
@@ -101,26 +100,26 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
     # The start date under current mode
     def start_date(self):
-        mode = self.options[Config.MODE]
+        mode = self.options.mode
         if mode == 'year':
-            return datetime.date(self.options[Config.YEAR], 1, 1)
+            return datetime.date(self.options.year, 1, 1)
         else:
             return datetime.date.today() - datetime.timedelta(days=366)
 
     # The end date under current mode
     def end_date(self):
-        mode = self.options[Config.MODE]
+        mode = self.options.mode
         if mode == 'year':
-            return datetime.date(self.options[Config.YEAR], 12, 31)
+            return datetime.date(self.options.year, 12, 31)
         else:
             return datetime.date.today()
 
     def echo(self, msg: str):
-        if not self.options.get(Config.SERVER, False):
+        if not self.options.server:
             click.echo(msg)
 
     # Render utils to output
-    def render(self, options: Dict[str, Any]):
+    def render(self, options: Configs):
         self.options = options
         self.echo(f"Start access {self.name} data...")
         raw = self.access()
@@ -186,7 +185,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         grid_max = np.nanmax(grid)
         grid_sum = np.nansum(grid)
 
-        color = self.options[Config.COLOR]
+        color = self.options.color
         if color is None:
             color = self.color
         else:
@@ -239,7 +238,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         ax.set_xticklabels(month_labels, ha="center")
         ax.xaxis.tick_top()
 
-        if self.options[Config.MODE] == 'till_now':
+        if self.options.mode == 'till_now':
             se_cax = ax.secondary_xaxis('bottom')
             se_cax.set_xticks([year_loc])
             se_cax.set_xticklabels([year])
@@ -264,7 +263,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         cax.set_yticklabels(["0", str(int(grid_max))])
         cax.tick_params(axis="y", which="major", pad=0, width=0)
 
-        if self.options[Config.FILE_TYPE] == 'svg':
+        if self.options.file_type == 'svg':
             font_family = 'sans-serif'
         else:
             import sys
@@ -292,15 +291,15 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 fontdict=hint_font_dict,
                 transform=ax.transAxes)
 
-        if self.options[Config.MODE] == 'year':
-            ax.text(-0.075, 0.6, f"{self.options[Config.YEAR]}",
+        if self.options.mode == 'year':
+            ax.text(-0.075, 0.6, f"{self.options.year}",
                     horizontalalignment='center',
                     verticalalignment='center',
                     fontdict=year_font_dict,
                     rotation=90,
                     transform=ax.transAxes)
 
-        file_type = self.options[Config.FILE_TYPE]
+        file_type = self.options.file_type
 
-        path = Path(self.options[Config.OUTPUT_DIR]) / get_filename(self.id, self.options)
+        path = Path(self.options.output_dir) / get_filename(self.id, self.options)
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)

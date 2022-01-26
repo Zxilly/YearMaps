@@ -6,8 +6,7 @@ from datetime import date
 
 import click
 
-from yearmaps.constant import Config
-from yearmaps.utils.util import get_file_prefix, get_file_identifier
+from yearmaps.constant import Config, Configs
 
 
 class Task:
@@ -19,36 +18,25 @@ class Task:
         self.command = command
         self.options = options
         self.context = deepcopy(context)
-        obj = self.context.obj
-        obj.update(global_options)
+        self.obj: Configs = self.context.obj
+        for key, value in global_options:
+            setattr(self.obj, key, value)
 
     def run(self, force=False):
         if self.should_run() or force:
             self.context.invoke(self.command, **self.options)
 
     def should_run(self) -> bool:
-        if self.context.obj[Config.MODE] == 'year':
-            if date.today().year == self.context.obj[Config.YEAR]:
+        if self.context.obj.mode == 'year':
+            if date.today().year == self.obj.year:
                 return True
         return False
 
-    def cache_file_prefix(self) -> str:
-        return get_file_identifier(self.command.name, self.context.obj)
+    def task_name(self) -> str:
 
-    def cache_file_name_hash(self) -> str:
-        file_prefix = get_file_identifier(self.command.name, self.context.obj)
-        return hashlib.md5(file_prefix.encode('utf-8')).hexdigest()
-
-    def server_name(self) -> str:
-        file_hash = self.cache_file_name_hash()
-        return f"{file_hash}.{self.context.obj[Config.FILE_TYPE]}"
-
-    def cache_name(self) -> str:
-        file_prefix = get_file_prefix(self.command.name, self.context.obj)
-        return f"{file_prefix}.{self.context.obj[Config.FILE_TYPE]}"
 
     def cache_path(self) -> Path:
-        return Path(self.context.obj[Config.OUTPUT_DIR]) / self.cache_name()
+        return Path(self.obj.output_dir) / self.cache_name()
 
     def ensure_cache(self, quiet=False):
         if not quiet:

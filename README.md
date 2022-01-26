@@ -38,8 +38,8 @@ Commands:
 Usage: yearmaps-server [OPTIONS]
 
 Options:
-  -l, --host TEXT     Host to listen on.
-  -p, --port INTEGER  Port to listen on.
+  -l, --host TEXT     Host to listen on.  [default: 0.0.0.0]
+  -p, --port INTEGER  Port to listen on.  [default: 5000]
   -f, --config TEXT   Path to config file.  [default: $(pwd)/yearmaps.yml]
   --help              Show this message and exit.
 ```
@@ -56,7 +56,7 @@ Usage: yearmaps bbdc [OPTIONS]
   不背单词
 
 Options:
-  -i, --id TEXT           不背单词用户 ID  [required]
+  -i, --uid TEXT          不背单词用户 ID  [required]
   -t, --gtype [time|word] 图数据类型
   --help                  Show this message and exit.
 ```
@@ -75,7 +75,7 @@ Usage: yearmaps bili [OPTIONS]
   bilibili
 
 Options:
-  -i, --id TEXT       bilibili uid  [required]
+  -i, --uid TEXT      bilibili uid  [required]
   -t, --gtype [video] 图数据类型
   --help              Show this message and exit.
 ```

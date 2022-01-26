@@ -43,7 +43,7 @@ class GitHubProvider(Provider, ABC):
     @click.command('github', help="GitHub")
     @click.option('--user', '-u', type=str, required=True, help="GitHub user name")
     @click.option("--token", '-k', type=str, required=True, help="GitHub access token")
-    @click.option('--gtype', '-t', 'gtype', type=click.Choice(['contrib']), default='contrib', help="图数据类型")
+    @click.option('--type', '-t', 'gtype', type=click.Choice(['contrib']), default='contrib', help="图数据类型")
     @click.pass_context
     def command(ctx: click.Context, user: str, gtype: str, token: str):
         if gtype == 'contrib':

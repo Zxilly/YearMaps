@@ -1,14 +1,14 @@
 from abc import ABC
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 import click
 import requests
 
-from yearmaps.utils import YearData
 from yearmaps.interface.provider import Provider
-from yearmaps.utils.error import ProviderError
+from yearmaps.utils import YearData
 from yearmaps.utils.colors import orange
+from yearmaps.utils.error import ProviderError
 
 ENDPOINT_URL = "https://learnywhere.cn/bb/dashboard/profile/search?userId={user_id}"
 
@@ -78,8 +78,8 @@ class BBDCProvider(Provider, ABC):
 
     @staticmethod
     @click.command('bbdc', help="不背单词")
-    @click.option('--uid', '-i', 'uid', type=str, required=True, help='不背单词用户 ID')
-    @click.option('--gtype', '-t', 'gtype', type=click.Choice(['time', 'word']), default='time', help='图数据类型')
+    @click.option('--id', '-i', 'uid', type=str, required=True, help='不背单词用户 ID')
+    @click.option('--type', '-t', 'gtype', type=click.Choice(['time', 'word']), default='time', help='图数据类型')
     @click.pass_context
     def command(ctx: click.Context, uid: str, gtype: str):
         if gtype == 'time':
