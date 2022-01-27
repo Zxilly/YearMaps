@@ -1,6 +1,7 @@
 import hashlib
 from dataclasses import dataclass
 from datetime import timedelta
+from copy import deepcopy
 
 
 @dataclass
@@ -14,7 +15,9 @@ class Configs:
     server: bool = None
 
     def hash(self):
-        return hashlib.md5(str(self).encode()).hexdigest()
+        a = deepcopy(self)
+        a.output = None
+        return hashlib.md5(str(a).encode()).hexdigest()
 
 
 ONE_DAY = timedelta(days=1)

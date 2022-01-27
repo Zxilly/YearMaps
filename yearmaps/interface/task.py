@@ -44,7 +44,7 @@ class Task:
         return Path(self.global_config.output)
 
     def task_name(self) -> str:
-        return f"{self.command.name} {self.command_options} {self.global_config}"
+        return f"{self.command.name} {self.command_options} {self.global_config} \n{self.task_hash()}"
 
     def ensure_cache(self, quiet=False):
         if not quiet:
