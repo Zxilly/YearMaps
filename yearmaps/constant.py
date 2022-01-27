@@ -17,7 +17,7 @@ class Configs:
     def hash(self):
         a = deepcopy(self)
         a.output = None
-        return hashlib.md5(str(a).encode()).hexdigest()
+        return hashlib.md5(str(a).encode('UTF-8')).hexdigest()
 
 
 ONE_DAY = timedelta(days=1)
