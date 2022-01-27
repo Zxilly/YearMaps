@@ -23,7 +23,7 @@ from yearmaps.utils.file import default_data_dir
               help='Color to override provider default color')
 @click.pass_context
 def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode: str, year: int, color: str):
-    ctx.obj = Configs(data_dir=data_dir, output_dir=output_dir, mode=mode, file_type=file_type, color=color)
+    ctx.obj = Configs(data_dir=data_dir, output=output_dir, mode=mode, file_type=file_type, color=color)
     obj = ctx.obj
     if mode == 'year':
         if year is None:

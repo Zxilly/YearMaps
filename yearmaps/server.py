@@ -58,9 +58,9 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     # Copy yaml config to context object
     ctx.obj = Configs(
         data_dir=config_dict['data-dir'],
-        output_dir=config_dict['cache-dir'],
+        output=config_dict['cache-dir'], # should append filename later
         mode=config_dict['mode'],
-        year=config_dict['year'],
+        year=config_dict.get('year', None),
         file_type=config_dict['file_type'],
         color=config_dict.get('color', None)
     )
@@ -157,8 +157,8 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     # Build tasks hash table
     tasks_hash_table = {}
     for task in task_list:
-        click.echo(f'Valid task: {task.cache_file_prefix()} {task.cache_file_name_hash()}')
-        tasks_hash_table[task.cache_file_name_hash()] = task
+        click.echo(f'Valid task: {task.task_name()}')
+        tasks_hash_table[task.task_hash()] = task
 
     @app.router.http('/{filehash}')
     async def handler():

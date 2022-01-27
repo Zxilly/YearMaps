@@ -301,5 +301,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         file_type = self.options.file_type
 
-        path = Path(self.options.output_dir) / get_filename(self.id, self.options)
+        if self.options.server:
+            path = Path(self.options.output)
+        else:
+            path = Path(self.options.output) / f"{self.id}.{file_type}"
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)
