@@ -6,7 +6,7 @@ EXPOSE 5000/tcp
 
 RUN pip install yearmaps==0.0.10 && \
     apt-get update && \
-    apt install -y fonts-wqy-zenhei && \
+    apt install -y fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
 
 CMD yearmaps-server

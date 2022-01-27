@@ -267,7 +267,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             font_family = 'sans-serif'
         else:
             import sys
-            font_family = sys.platform == 'win32' and 'Microsoft YaHei' or 'WenQuanYi Zen Hei'
+            font_family = sys.platform == 'win32' and 'Microsoft YaHei' or 'Noto Sans CJK SC'
 
         title_font_dict = {'fontsize': 30,
                            'fontfamily': font_family,
