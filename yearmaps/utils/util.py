@@ -8,3 +8,13 @@ def dict_hash(d: dict) -> str:
 
 def str_hash(*s: str) -> str:
     return hashlib.md5(("".join(s)).encode('UTF-8')).hexdigest()
+
+
+def option_name(name: str) -> str:
+    if name.startswith('--'):
+        name = name[2:]
+    elif name.startswith('-'):
+        name = name[1:]
+    name = name.replace('-', '_')
+    name = name.lower()
+    return name

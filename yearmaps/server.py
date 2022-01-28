@@ -17,6 +17,7 @@ from yearmaps.provider import providers, provider_map
 from yearmaps.utils import file
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import ensure_dir
+from yearmaps.utils.util import option_name
 
 
 @click.command()
@@ -58,7 +59,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     # Copy yaml config to context object
     ctx.obj = Configs(
         data_dir=config_dict['data-dir'],
-        output=config_dict['cache-dir'], # should append filename later
+        output=config_dict['cache-dir'],  # should append filename later
         mode=config_dict['mode'],
         year=config_dict.get('year', None),
         file_type=config_dict['file_type'],
@@ -94,15 +95,21 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         if not isinstance(provider_config, Dict):
             raise TypeError(f'Provider {key} must be a dict.')
 
-        if not set(provider_config.keys()).issuperset(set(provider_required_params[key])):
-            raise KeyError(
-                'Provider {key} is missing required params: '
-                f'{set(provider_required_params[key]) - set(provider_config.keys())}')
+    def command_option_map(com: click.Command, option: str) -> str:
+        for par in com.params:
+            if option == par.name: return option
+            for opt in par.opts:
+                if option_name(opt) == option:
+                    return par.name
+        raise ValueError(f'Option not found: {option}')
 
     # Build tasks
     task_list: List[Task] = []
     for provider_key, provider_config in config_dict['providers'].items():
         global_config = {}
+
+        command = provider_map[provider_key].command
+
         if 'global' in provider_config.keys():
             if not isinstance(provider_config['global'], Dict):
                 raise TypeError('Global config must be a dict.')
@@ -130,7 +137,20 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
                 global_config[key] = value
                 provider_config.pop('global')
-        task_list.append(Task(ctx, provider_map[provider_key].command, global_config, provider_config))
+
+        replace_keys = []
+        for key, value in provider_config.items():
+            mapped_option = command_option_map(command, key)
+            if key != mapped_option:
+                replace_keys.append((key, mapped_option))
+        for old, new in replace_keys:
+            provider_config[new] = provider_config.pop(old)
+
+        if not set(provider_config.keys()).issuperset(set(provider_required_params[provider_key])):
+            raise KeyError(
+                'Provider {key} is missing required params: '
+                f'{set(provider_required_params[provider_key]) - set(provider_config.keys())}')
+        task_list.append(Task(ctx, command, global_config, provider_config))
 
     def ensure_cache():
         for queue_task in task_list:
