@@ -7,7 +7,7 @@ EXPOSE 5000/tcp
 RUN apt-get update && \
     apt install -y fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install yearmaps==0.0.12
+RUN pip install yearmaps==0.0.13
 
 CMD yearmaps-server
 
