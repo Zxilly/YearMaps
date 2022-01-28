@@ -33,6 +33,12 @@ class ProviderInfo(ABC):
     def dtype(self) -> Callable:
         return int
 
+    @property
+    def analysis(self) -> Callable:
+        def max_value(data: np.ndarray):
+            return np.nanmax(data)
+        return max_value
+
     # Provider name
     @property
     def name(self) -> str:
@@ -178,12 +184,12 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             return empty_grid, month_list, year_tuple
 
         grid, months, (year, year_loc) = fulfill_data()
+        grid: np.ndarray
 
         mpl.rcParams['font.family'] = 'monospace'
         mpl.rcParams['svg.fonttype'] = 'none'
 
         grid_max = np.nanmax(grid)
-        grid_sum = np.nansum(grid)
 
         color = self.options.color
         if color is None:
@@ -285,7 +291,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             'fontweight': 'bold'
         }
 
-        ax.text(1, 1.25, f"{self.dtype(grid_sum)} {self.unit}",
+        # overall analysis
+        ax.text(1, 1.25, f"{self.dtype(self.analysis(grid))} {self.unit}",
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 fontdict=hint_font_dict,
