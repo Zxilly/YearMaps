@@ -35,7 +35,7 @@ class ProviderInfo(ABC):
 
     @staticmethod
     def analysis(data: np.ndarray):
-        return np.nanmax(data)
+        return np.nansum(data)
 
     # Provider name
     @property
