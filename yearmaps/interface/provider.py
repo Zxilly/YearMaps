@@ -246,7 +246,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         if self.options.mode == 'till_now':
             se_cax = ax.secondary_xaxis('bottom')
             se_cax.set_xticks([year_loc])
-            se_cax.set_xticklabels([year])
+            se_cax.set_xticklabels([year], ha="left")
             se_cax.tick_params(axis="x", pad=0, width=0, color='#24292f')
             se_cax.set_frame_on(False)
 
