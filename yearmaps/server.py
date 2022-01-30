@@ -188,6 +188,14 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
             return indexpy.HttpResponse(status_code=404)
         return indexpy.FileResponse(filepath=str(tasks_hash_table[filehash].cache_path()))
 
+    @app.router.http('/')
+    async def map_list():
+        ret = []
+        for task_hash, task_item in tasks_hash_table.items():
+            ret.append((task_item.command.name, task_hash))
+
+        return indexpy.JSONResponse(ret)
+
     # noinspection PyTypeChecker
     uvicorn.run(app, host=config_dict['host'], port=config_dict['port'])
 
