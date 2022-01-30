@@ -97,7 +97,8 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
     def command_option_map(com: click.Command, option: str) -> str:
         for par in com.params:
-            if option == par.name: return option
+            if option == par.name:
+                return option
             for opt in par.opts:
                 if option_name(opt) == option:
                     return par.name
