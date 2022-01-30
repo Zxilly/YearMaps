@@ -1,0 +1,38 @@
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install
+
+    - name: Run tests
+      run: |
+        poetry run pytest
+
+    - name: Assume version match git tag
+      run: |
+        git describe --tags --exact-match | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+$' > git_version.txt
+        poetry version | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+$' > poetry_version.txt
+        diff git_version.txt poetry_version.txt
+        rm git_version.txt poetry_version.txt
+
+    - name: Build and publish
+      run: |
+        poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
+    
