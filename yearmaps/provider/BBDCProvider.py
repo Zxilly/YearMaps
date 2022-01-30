@@ -53,9 +53,8 @@ class BBDCProvider(Provider, ABC):
 
         def today_transform(date):
             if not date == "今日":
-                return f"{datetime.today().year}-{date}"
-            else:
                 return datetime.today().strftime("%Y-%m-%d")
+            return f"{datetime.today().year}-{date}"
 
         for i in duration:
             full_date = today_transform(i["date"])
@@ -94,9 +93,9 @@ class BBDCProvider(Provider, ABC):
 class BBDCTimeProvider(BBDCProvider):
     unit = "分钟"
 
-    def process(self, data: Any) -> YearData:
-        result = dict()
-        for date, day_data in data['utils'].items():
+    def process(self, raw: Any) -> YearData:
+        result = {}
+        for date, day_data in raw['utils'].items():
             date = datetime.strptime(date, "%Y-%m-%d").date()
             if self.is_date_valid(date):
                 time = day_data.get('time', 0)
@@ -107,9 +106,9 @@ class BBDCTimeProvider(BBDCProvider):
 class BBDCWordProvider(BBDCProvider):
     unit = "词"
 
-    def process(self, data: Any) -> YearData:
-        result = dict()
-        for date, day_data in data['utils'].items():
+    def process(self, raw: Any) -> YearData:
+        result = {}
+        for date, day_data in raw['utils'].items():
             date = datetime.strptime(date, "%Y-%m-%d").date()
             if self.is_date_valid(date):
                 learn: int = day_data.get('learn', 0)

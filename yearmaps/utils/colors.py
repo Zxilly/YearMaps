@@ -1,6 +1,5 @@
 from typing import List
 
-import numpy
 from matplotlib.colors import ListedColormap, to_rgba_array
 import numpy as np
 import click
@@ -21,14 +20,14 @@ class PolarisationColorMap(ListedColormap):
 
     # noinspection PyShadowingBuiltins
     def __call__(self, X, alpha=None, bytes=False):
-        if type(X) == numpy.ma.core.MaskedArray:
+        if isinstance(X, np.ma.core.MaskedArray):
             index = np.where(X == 0)
             color = super(ListedColormap, self).__call__(X, alpha=alpha, bytes=bytes)
             for i in index:
                 color[i] = self.zero_color
             if self.full_zero:
-                for i in range(len(color)):
-                    if type(X[i]) != numpy.ma.core.MaskedConstant:
+                for i, _ in enumerate(color):
+                    if not isinstance(X[i], np.ma.core.MaskedConstant):
                         color[i] = self.zero_color
             return color
         click.echo(f"Unhandled situation {type(X)}", err=True)

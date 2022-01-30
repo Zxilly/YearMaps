@@ -28,6 +28,7 @@ pytest = "^6.2.5"
 
 [tool.poetry.dev-dependencies]
 poetry = "^1.1.12"
+pylint = "^2.12.2"
 
 [tool.poetry.scripts]
 yearmaps = "yearmaps.script:main"

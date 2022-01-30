@@ -71,7 +71,7 @@ class GitHubContribProvider(GitHubProvider):
         return resp.json()
 
     def process(self, raw: Any) -> YearData:
-        result = dict()
+        result = {}
         data = raw['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
         for week in data:
             for day in week['contributionDays']:

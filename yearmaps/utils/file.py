@@ -12,11 +12,9 @@ def ensure_dir(dir_: Union[Path, str]) -> Path:
             raise FileExistsError(f"Parent directory of {dir_} does not exist")
         dir_.mkdir()
         return dir_
-    else:
-        if not dir_.is_dir():
-            raise ProviderError("Default utils directory is not a directory")
-        else:
-            return dir_
+    if not dir_.is_dir():
+        raise ProviderError("Default utils directory is not a directory")
+    return dir_
 
 
 def default_data_dir() -> Path:

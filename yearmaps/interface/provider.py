@@ -3,7 +3,7 @@ import datetime
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Any, List, Callable, Union
+from typing import Dict, Any, List, Callable
 
 import click
 import matplotlib as mpl
@@ -15,7 +15,6 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
-from numpy import ndarray
 
 from yearmaps.constant import ONE_DAY, Configs
 from yearmaps.utils import YearData
@@ -108,16 +107,14 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         mode = self.options.mode
         if mode == 'year':
             return datetime.date(self.options.year, 1, 1)
-        else:
-            return datetime.date.today() - datetime.timedelta(days=366)
+        return datetime.date.today() - datetime.timedelta(days=366)
 
     # The end date under current mode
     def end_date(self):
         mode = self.options.mode
         if mode == 'year':
             return datetime.date(self.options.year, 12, 31)
-        else:
-            return datetime.date.today()
+        return datetime.date.today()
 
     def echo(self, msg: str):
         if not self.options.server:
@@ -272,7 +269,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
             font_family = 'sans-serif'
         else:
             import sys
-            font_family = sys.platform == 'win32' and 'Microsoft YaHei' or 'Noto Sans CJK SC'
+            font_family = 'Microsoft YaHei' if sys.platform == 'win32' else 'Noto Sans CJK SC'
 
         title_font_dict = {'fontsize': 30,
                            'fontfamily': font_family,

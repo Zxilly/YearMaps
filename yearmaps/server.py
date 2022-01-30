@@ -88,7 +88,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
     # Validate provider config
     for key in config_dict['providers'].keys():
-        if key not in provider_required_params.keys():
+        if key not in provider_required_params:
             raise KeyError(f'Provider not found: {key}')
 
         provider_config = config_dict['providers'][key]
@@ -118,23 +118,23 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                 # Additional check for global config
                 if not hasattr(obj, key):
                     raise KeyError(f'{key} is not a valid global option.')
-                else:
-                    if key == 'mode':
-                        if value not in ['till_now', 'year']:
-                            raise ValueError(f'{value} is not a valid mode.')
-                    elif key == 'year':
-                        if not isinstance(value, int):
-                            raise TypeError('Year must be an integer.')
-                        if value < 2000 or value > datetime.now().year:
-                            raise ValueError(f'{value} is not a valid year.')
-                    elif key == 'file_type':
-                        if value not in ['png', 'svg']:
-                            raise ValueError(f'{value} is not a supported file type.')
-                    elif key == 'color':
-                        if not isinstance(value, str):
-                            raise TypeError('Color must be a string.')
-                        if value not in color_list.keys():
-                            raise ValueError(f'{value} is not a valid color.')
+
+                if key == 'mode':
+                    if value not in ['till_now', 'year']:
+                        raise ValueError(f'{value} is not a valid mode.')
+                elif key == 'year':
+                    if not isinstance(value, int):
+                        raise TypeError('Year must be an integer.')
+                    if value < 2000 or value > datetime.now().year:
+                        raise ValueError(f'{value} is not a valid year.')
+                elif key == 'file_type':
+                    if value not in ['png', 'svg']:
+                        raise ValueError(f'{value} is not a supported file type.')
+                elif key == 'color':
+                    if not isinstance(value, str):
+                        raise TypeError('Color must be a string.')
+                    if value not in color_list:
+                        raise ValueError(f'{value} is not a valid color.')
 
                 global_config[key] = value
                 provider_config.pop('global')
@@ -184,7 +184,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     @app.router.http('/{filehash}')
     async def handler():
         filehash = indexpy.request.path_params.get('filehash')
-        if filehash not in tasks_hash_table.keys():
+        if filehash not in tasks_hash_table:
             return indexpy.HttpResponse(status_code=404)
         return indexpy.FileResponse(filepath=str(tasks_hash_table[filehash].cache_path()))
 
