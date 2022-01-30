@@ -184,8 +184,10 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
 
         mpl.rcParams['font.family'] = 'monospace'
         mpl.rcParams['svg.fonttype'] = 'none'
+        mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Noto Sans CJK']
 
         grid_max = np.nanmax(grid)
+        grid_min = np.nanmin(grid)
 
         color = self.options.color
         if color is None:
@@ -205,7 +207,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         ax: matplotlib.axes.Axes
 
         pc = ax.pcolormesh(grid, edgecolors=ax.get_facecolor(), linewidth=1, cmap=c_map)
-        pc.set_clim(0, grid_max)
+        pc.set_clim(grid_min, grid_max)
         ax.invert_yaxis()
         ax.set_aspect("equal")
 
@@ -265,11 +267,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         cax.set_yticklabels(["0", str(int(grid_max))])
         cax.tick_params(axis="y", which="major", pad=0, width=0)
 
-        if self.options.file_type == 'svg':
-            font_family = 'sans-serif'
-        else:
-            import sys
-            font_family = 'Microsoft YaHei' if sys.platform == 'win32' else 'Noto Sans CJK SC'
+        font_family = 'sans-serif'
 
         title_font_dict = {'fontsize': 30,
                            'fontfamily': font_family,

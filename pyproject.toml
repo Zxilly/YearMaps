@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yearmaps"
-version = "0.0.16"
+version = "0.0.17"
 description = "Generate heat map of a year."
 authors = ["Zxilly <zxilly@outlook.com>"]
 license = "GPL-3.0-only"
