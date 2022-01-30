@@ -52,7 +52,7 @@ class BBDCProvider(Provider, ABC):
         learn = body["learnList"]
 
         def today_transform(date):
-            if not date == "今日":
+            if date == "今日":
                 return datetime.today().strftime("%Y-%m-%d")
             return f"{datetime.today().year}-{date}"
 
