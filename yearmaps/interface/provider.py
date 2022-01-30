@@ -3,7 +3,7 @@ import datetime
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Any, List, Callable
+from typing import Dict, Any, List, Callable, Union
 
 import click
 import matplotlib as mpl
@@ -15,6 +15,7 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.ticker import ScalarFormatter
 from matplotlib.transforms import Bbox
+from numpy import ndarray
 
 from yearmaps.constant import ONE_DAY, Configs
 from yearmaps.utils import YearData
@@ -30,14 +31,12 @@ class ProviderInfo(ABC):
         pass
 
     @property
-    def dtype(self) -> Callable:
+    def value_type(self) -> Callable:
         return int
 
-    @property
-    def analysis(self) -> Callable:
-        def max_value(data: np.ndarray):
-            return np.nanmax(data)
-        return max_value
+    @staticmethod
+    def analysis(data: np.ndarray):
+        return np.nanmax(data)
 
     # Provider name
     @property
@@ -197,7 +196,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         else:
             color = color_list[color]
 
-        if self.dtype == int:
+        if self.value_type == int:
             color_need = int(grid_max)
         else:
             color_need = -1
@@ -292,7 +291,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
         }
 
         # overall analysis
-        ax.text(1, 1.25, f"{self.dtype(self.analysis(grid))} {self.unit}",
+        ax.text(1, 1.25, f"{self.value_type(self.analysis(grid))} {self.unit}",
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 fontdict=hint_font_dict,
