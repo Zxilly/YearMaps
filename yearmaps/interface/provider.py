@@ -164,7 +164,7 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                 empty_grid[get_day(date)][get_week(date)] = value
 
             month_list = np.linspace(-1, -1, weeks, dtype=int)
-            year_tuple = (0, 0)
+            year_tuple = None
             current_year = None
             for date in date_range(start, end):
                 date: datetime.date
@@ -176,7 +176,8 @@ class Provider(ProviderInfo, ProviderInterface, ABC):
                     if current_year is None:
                         current_year = date.year
                     elif current_year != date.year:
-                        year_tuple = (date.year, get_week(date))
+                        if year_tuple is None:
+                            year_tuple = (date.year, get_week(date))
             return empty_grid, month_list, year_tuple
 
         grid, months, (year, year_loc) = fulfill_data()
