@@ -6,7 +6,7 @@ from typing import Any
 import click
 import requests
 
-from yearmaps.interface.provider import Provider
+from yearmaps.impl.provider import Provider
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import purple
 from yearmaps.utils.error import ProviderError

@@ -5,7 +5,7 @@ from typing import Any
 import click
 import requests
 
-from yearmaps.interface.provider import Provider
+from yearmaps.impl.provider import Provider
 from yearmaps.utils import YearData
 from yearmaps.utils.colors import orange
 from yearmaps.utils.error import ProviderError
@@ -14,66 +14,12 @@ ENDPOINT_URL = "https://learnywhere.cn/bb/dashboard/profile/search?userId={user_
 
 
 class BBDCProvider(Provider, ABC):
-    """
-    cache structure
-    id: user-id
-    utils:
-      2021-1-1:
-        learn: 20
-        time: 5
-        review: 20
-    """
-
     name = "不背单词"
     id = "bbdc"
     color = orange
 
     def __init__(self, uid: str):
         self.uid = uid
-
-    def access(self):
-        data = self.read_data_file()
-        if data == {}:
-            data = {
-                "id": self.uid,
-                "utils": {}
-            }
-        if data.get("id") != self.uid:
-            raise ProviderError("user_id 和数据缓存不一致")
-        resp = requests.get(ENDPOINT_URL.format(user_id=self.uid))
-        if not resp.ok:
-            raise ProviderError(f"Meet network error. {resp.reason}")
-        resp_data = resp.json()
-        if resp_data["result_code"] != 200:
-            raise ProviderError(f"Unexpected error. {data}")
-
-        body = resp_data["data_body"]
-        duration = body["durationList"]
-        learn = body["learnList"]
-
-        def today_transform(date):
-            if date == "今日":
-                return datetime.today().strftime("%Y-%m-%d")
-            return f"{datetime.today().year}-{date}"
-
-        for i in duration:
-            full_date = today_transform(i["date"])
-            if full_date not in data["utils"]:
-                data["utils"][full_date] = {}
-            dur = i["duration"]
-            data["utils"][full_date]["time"] = dur
-
-        for i in learn:
-            full_date = today_transform(i["date"])
-            if full_date not in data["utils"]:
-                data["utils"][full_date] = {}
-            learn = i["learnNum"]
-            review = i["reviewNum"]
-            data["utils"][full_date]["learn"] = learn
-            data["utils"][full_date]["review"] = review
-        self.write_data_file(data)
-
-        return data
 
     @staticmethod
     @click.command('bbdc', help="不背单词")
@@ -88,6 +34,59 @@ class BBDCProvider(Provider, ABC):
         else:
             raise ProviderError(f"Unknown type {gtype}")
         provider.render(ctx.obj)
+
+    def access(self):
+
+        """
+            data structure
+            id: user-id
+            utils:
+              2021-1-1:
+                learn: 20
+                time: 5
+                review: 20
+        """
+        with self.data_file() as data:
+            if not data:
+                data = {
+                    "id": self.uid,
+                    "utils": {}
+                }
+            if data.get("id") != self.uid:
+                raise ProviderError("user_id 和数据缓存不一致")
+            resp = requests.get(ENDPOINT_URL.format(user_id=self.uid))
+            if not resp.ok:
+                raise ProviderError(f"Meet network error. {resp.reason}")
+            resp_data = resp.json()
+            if resp_data["result_code"] != 200:
+                raise ProviderError(f"Unexpected error. {data}")
+
+            body = resp_data["data_body"]
+            duration = body["durationList"]
+            learn = body["learnList"]
+
+            def today_transform(date):
+                if date == "今日":
+                    return datetime.today().strftime("%Y-%m-%d")
+                return f"{datetime.today().year}-{date}"
+
+            for i in duration:
+                full_date = today_transform(i["date"])
+                if full_date not in data["utils"]:
+                    data["utils"][full_date] = {}
+                dur = i["duration"]
+                data["utils"][full_date]["time"] = dur
+
+            for i in learn:
+                full_date = today_transform(i["date"])
+                if full_date not in data["utils"]:
+                    data["utils"][full_date] = {}
+                learn = i["learnNum"]
+                review = i["reviewNum"]
+                data["utils"][full_date]["learn"] = learn
+                data["utils"][full_date]["review"] = review
+
+        return data
 
 
 class BBDCTimeProvider(BBDCProvider):

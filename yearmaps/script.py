@@ -32,6 +32,7 @@ def cli(ctx: click.Context, data_dir: str, output_dir: str, file_type: str, mode
     elif mode == 'till_now':
         if year is not None:
             click.echo('Year is not ignored when mode is "till_now"', err=True)
+    click.echo("Selecting provider.")
 
 
 def main():

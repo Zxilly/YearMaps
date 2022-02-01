@@ -300,6 +300,10 @@ spelling-ignore-comment-directives=fmt: on,fmt: off,noqa:,noqa,nosec,isort:skip,
 # --spelling-private-dict-file option) instead of raising a message.
 spelling-store-unknown-words=no
 
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+notes=FIXME,XXX,TODO
 
 [STRING]
 
