@@ -21,14 +21,10 @@ jobs:
         cache: 'poetry'
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install poetry
-        poetry install
+      run: poetry install
 
     - name: Run tests
-      run: |
-        poetry run pytest
+      run: poetry run pytest
 
     - name: Assume version match git tag
       run: |
