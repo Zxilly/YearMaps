@@ -27,7 +27,10 @@ jobs:
           cache: 'poetry'
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
 
       - name: Build package
         run: poetry build
@@ -41,7 +44,7 @@ jobs:
           username: zxilly
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Login to GitHub
+      - name: Log into GitHub
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -56,7 +59,7 @@ jobs:
             type=sha
             type=ref,event=branch
             type=ref,event=tag
-          images: zxilly/${{ env.IMAGE_NAME }}
+          images: zxilly/${{ env.IMAGE_NAME }},ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         id: build
