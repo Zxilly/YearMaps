@@ -4,7 +4,7 @@ import click
 import numpy as np
 from matplotlib.colors import ListedColormap, to_rgba_array
 
-no_value_color = to_rgba_array("#D3D3D3")
+no_value_color = to_rgba_array("#f6f6f6")
 
 
 class PolarisationColorMap(ListedColormap):

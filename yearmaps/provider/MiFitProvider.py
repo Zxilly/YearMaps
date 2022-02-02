@@ -100,7 +100,7 @@ class MiFitSleepProvider(MiFitProvider):
     @staticmethod
     def format_time(time: int) -> str:
         t = timedelta(seconds=time)
-        return f"{t.seconds // 3600} 小时 {t.seconds // 60 % 60} 分钟"
+        return f"平均：{t.seconds // 3600} 小时 {t.seconds // 60 % 60} 分钟"
 
     unit = format_time
 
