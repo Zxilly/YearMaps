@@ -4,9 +4,10 @@ WORKDIR /app
 
 EXPOSE 5000/tcp
 
-COPY dist/yearmaps*.whl /app/yearmaps.whl
+COPY dist/yearmaps*.whl /app
 
-RUN apt-get update && \
+RUN mv yearmaps* yearmaps.whl \
+    apt-get update && \
     apt install -y fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
 RUN pip install yearmaps.whl && \
