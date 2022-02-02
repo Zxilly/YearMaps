@@ -97,6 +97,8 @@ class MiFitProvider(Provider, ABC):
 
 
 class MiFitSleepProvider(MiFitProvider):
+    name = '睡眠时间'
+
     @staticmethod
     def format_time(time: int) -> str:
         t = timedelta(seconds=time)

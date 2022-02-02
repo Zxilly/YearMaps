@@ -89,7 +89,7 @@ class Provider(ProviderInterface, ProviderUtils, ABC):
                     if current_year is None:
                         current_year = date.year
                     elif current_year != date.year:
-                        if year_tuple is None:
+                        if year_tuple[0] != date.year:
                             year_tuple = (date.year, get_week(date))
             return empty_grid, month_list, year_tuple, _no_grey_index
 
