@@ -33,12 +33,16 @@ class MiFitProvider(Provider, ABC):
             if "user_id" in data and "up_token" in data:
                 self.user_id = data["user_id"]
                 self.up_token = data["up_token"]
-                self.login_with_token()
-            else:
-                self.login_with_password(self.phone, self.password)
-                self.login_with_token()
-                data["user_id"] = self.user_id
-                data["up_token"] = self.up_token
+                try:
+                    self.login_with_token()  # check token
+                    return
+                except ProviderError as e:
+                    if e.status_code != 400:
+                        raise e
+            self.login_with_password(self.phone, self.password)
+            self.login_with_token()
+            data["user_id"] = self.user_id
+            data["up_token"] = self.up_token
 
     @staticmethod
     @click.command('mifit', help='小米运动')
@@ -90,7 +94,9 @@ class MiFitProvider(Provider, ABC):
         }
         resp = requests.post("https://account.huami.com/v2/client/login", data=req_data)
         if not resp.ok:
-            raise ProviderError(f"Login failed {resp.status_code} {resp.reason}")
+            err = ProviderError(f"Login failed {resp.status_code} {resp.reason}")
+            err.status_code = resp.status_code
+            raise err
         resp_data = resp.json()
         self.app_token = resp_data["token_info"]["app_token"]
         self.user_id = resp_data["token_info"]["user_id"]

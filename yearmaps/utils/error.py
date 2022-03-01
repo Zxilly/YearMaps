@@ -1,2 +1,2 @@
 class ProviderError(Exception):
-    pass
+    status_code = 0
