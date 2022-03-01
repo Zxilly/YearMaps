@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 from typing import Union
 
@@ -9,11 +10,11 @@ def ensure_dir(dir_: Union[Path, str]) -> Path:
         dir_ = Path(dir_)
     if not dir_.exists():
         if not dir_.parent.exists():
-            raise FileExistsError(f"Parent directory of {dir_} does not exist")
+            raise FileExistsError(f"Parent directory of {dir_.absolute().__str__()} does not exist")
         dir_.mkdir()
         return dir_
     if not dir_.is_dir():
-        raise ProviderError("Default utils directory is not a directory")
+        raise ProviderError(f"{dir_.absolute().__str__()} is not a directory")
     return dir_
 
 
@@ -26,6 +27,4 @@ def default_data_dir() -> Path:
 
 
 def default_cache_dir() -> Path:
-    data_dir = default_data_dir()
-    cache_dir = data_dir / "cache"
-    return ensure_dir(cache_dir)
+    return Path(tempfile.gettempdir()) / "yearmaps-cache"
