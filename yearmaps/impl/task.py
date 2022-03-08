@@ -11,10 +11,12 @@ from yearmaps.utils.util import dict_hash, str_hash
 
 class Task:
     def __init__(self,
+                 name: str,
                  context: click.Context,
                  command: click.Command,
                  global_options: Dict,
                  options: Dict):
+        self.name = name
         self.command = command
         self.command_options = options
         self.context = deepcopy(context)

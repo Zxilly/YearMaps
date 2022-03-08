@@ -15,7 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Install poetry
         run: pipx install poetry
@@ -31,6 +37,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
+
+      - name: Install Node dependencies
+        run: yarn install
+        working-directory: frontend
+
+      - name: Build the frontend
+        run: yarn build
+        working-directory: frontend
 
       - name: Build package
         run: poetry build

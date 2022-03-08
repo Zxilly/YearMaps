@@ -9,19 +9,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
 
     - name: Install poetry
       run: pipx install poetry
 
     - name: Set up Python
-      uses: patrick91/setup-python@99a5f2b0ed0ad8a829212e44012c5116ef2598ee
+      uses: patrick91/setup-python@86304bc8d22d80bb431495f669dfa07f550d2c93
       with:
         python-version: '3.10'
         cache: 'poetry'
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: poetry install
+
+    - name: Install Node dependencies
+      run: yarn install
+      working-directory: frontend
+
+    - name: Build the frontend
+      run: yarn build
+      working-directory: frontend
 
     - name: Run tests
       run: poetry run pytest

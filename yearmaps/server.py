@@ -7,12 +7,13 @@ from typing import Dict, List
 
 import click
 import indexpy
+import schedule
 import uvicorn
 import yaml
-import schedule
+from indexpy import request
 
 from yearmaps.constant import Configs
-from yearmaps.interface.task import Task
+from yearmaps.impl.task import Task
 from yearmaps.provider import providers, provider_map
 from yearmaps.utils import file
 from yearmaps.utils.colors import color_list
@@ -109,7 +110,9 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
     for provider_key, provider_config in config_dict['providers'].items():
         global_config = {}
 
-        command = provider_map[provider_key].command
+        provider = provider_map[provider_key]
+        command = provider.command
+        name = provider.name
 
         if 'global' in provider_config.keys():
             if not isinstance(provider_config['global'], Dict):
@@ -151,7 +154,8 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
             raise KeyError(
                 'Provider {key} is missing required params: '
                 f'{set(provider_required_params[provider_key]) - set(provider_config.keys())}')
-        task_list.append(Task(ctx, command, global_config, provider_config))
+
+        task_list.append(Task(name, ctx, command, global_config, provider_config))
 
     def ensure_cache():
         for queue_task in task_list:
@@ -181,20 +185,27 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         click.echo(f'Valid task: {task.task_name()}')
         tasks_hash_table[task.task_hash()] = task
 
-    @app.router.http('/{filehash}')
-    async def handler():
-        filehash = indexpy.request.path_params.get('filehash')
-        if filehash not in tasks_hash_table:
-            return indexpy.HttpResponse(status_code=404)
-        return indexpy.FileResponse(filepath=str(tasks_hash_table[filehash].cache_path()))
+    @app.router.http('/', name='index')
+    @app.router.http('/{path:any}', name='route')
+    async def static():
+        if request.path_params:
+            path = request.path_params['path']
+        else:
+            path = 'index.html'
 
-    @app.router.http('/')
-    async def map_list():
-        ret = []
-        for task_hash, task_item in tasks_hash_table.items():
-            ret.append((task_item.command.name, task_hash))
+        if path == 'api':
+            ret = []
+            for task_hash, task_item in tasks_hash_table.items():
+                ret.append((task_item.command.name, task_item.name, task_hash))
+            return indexpy.JSONResponse(ret)
 
-        return indexpy.JSONResponse(ret)
+        if path in tasks_hash_table:
+            return indexpy.FileResponse(filepath=str(tasks_hash_table[path].cache_path()))
+
+        static_file = Path(__file__).parent / "static" / path
+        if static_file.is_file():
+            return indexpy.FileResponse(filepath=static_file)
+        return indexpy.HttpResponse(status_code=404)
 
     # noinspection PyTypeChecker
     uvicorn.run(app, host=config_dict['host'], port=config_dict['port'])

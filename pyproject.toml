@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yearmaps"
-version = "0.0.23"
+version = "0.0.24"
 description = "Generate heat map of a year."
 authors = ["Zxilly <zxilly@outlook.com>"]
 license = "GPL-3.0-only"
@@ -13,6 +13,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Natural Language :: Chinese (Simplified)"
 ]
+include = ["yearmaps/static/**/*"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
