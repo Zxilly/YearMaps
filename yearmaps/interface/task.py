@@ -30,9 +30,8 @@ class Task:
 
     def should_run(self) -> bool:
         if self.context.obj.mode == 'year':
-            if date.today().year == self.global_config.year:
-                return True
-        return False
+            return date.today().year == self.global_config.year
+        return True
 
     def task_hash(self) -> str:
         command_options_hash = dict_hash(self.command_options)
@@ -45,8 +44,11 @@ class Task:
     def task_name(self) -> str:
         return f"{self.command.name} {self.command_options} {self.global_config} \n{self.task_hash()}"
 
+    def update_cache(self):
+        click.echo(f"Updating cache for {self.global_config} {self.command_options}")
+        self.run(force=True)
+
     def ensure_cache(self, quiet=False):
         if not quiet:
             click.echo(f"Ensuring cache for {self.global_config} {self.command_options}")
-        if not self.cache_path().exists():
-            self.run(force=True)
+        self.run(force=True)

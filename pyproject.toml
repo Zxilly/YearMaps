@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yearmaps"
-version = "0.0.22"
+version = "0.0.23"
 description = "Generate heat map of a year."
 authors = ["Zxilly <zxilly@outlook.com>"]
 license = "GPL-3.0-only"
@@ -24,11 +24,11 @@ PyYAML = "^6.0"
 "index.py" = "^0.21.11"
 uvicorn = "^0.17.0"
 schedule = "^1.1.0"
-pytest = "^6.2.5"
 
 [tool.poetry.dev-dependencies]
 poetry = "^1.1.12"
 pylint = "^2.12.2"
+pytest = "^6.2.5"
 
 [tool.poetry.scripts]
 yearmaps = "yearmaps.script:main"
