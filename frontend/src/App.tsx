@@ -21,7 +21,7 @@ function App(): JSX.Element {
             {pics.map((provider: string[]) => {
                 return (
                     <Card>
-                        <Image src={`${BASE_URI}/${provider[2]}`}/>
+                        <Image preview={false} src={`${BASE_URI}/${provider[2]}`}/>
                     </Card>
                 )
             })}

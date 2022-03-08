@@ -204,7 +204,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
         static_file = Path(__file__).parent / "static" / path
         if static_file.is_file():
-            return indexpy.FileResponse(filepath=static_file)
+            return indexpy.FileResponse(filepath=str(static_file))
         return indexpy.HttpResponse(status_code=404)
 
     # noinspection PyTypeChecker
