@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
-import './Custom.css'
 import {Card, Image} from "antd";
 import {API_URI, BASE_URI} from "./Utils";
 
