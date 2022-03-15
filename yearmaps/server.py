@@ -167,7 +167,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         for queue_task in task_list:
             queue_task.update_cache()
 
-    schedule.every().day.at('00:00').do(update_cache)
+    schedule.every().day.at('23:30').do(update_cache)
 
     def loop():
         while True:
