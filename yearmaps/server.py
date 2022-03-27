@@ -18,7 +18,7 @@ from yearmaps.provider import providers, provider_map
 from yearmaps.utils import file
 from yearmaps.utils.colors import color_list
 from yearmaps.utils.file import ensure_dir
-from yearmaps.utils.util import option_name
+from yearmaps.utils.util import option_name, update_time, get_update_time
 
 
 @click.command()
@@ -54,8 +54,8 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         config_dict['file_type'] = 'png'
 
     # Check dirs
-    ensure_dir(config_dict['data-dir'])
-    ensure_dir(config_dict['cache-dir'])
+    config_dict['data-dir'] = ensure_dir(config_dict['data-dir'])
+    config_dict['cache-dir'] = ensure_dir(config_dict['cache-dir'])
 
     # Copy yaml config to context object
     ctx.obj = Configs(
@@ -66,8 +66,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
         file_type=config_dict['file_type'],
         color=config_dict.get('color', None)
     )
-    obj = ctx.obj
-    obj.server = True
+    ctx.obj.server = True
 
     # Check provider config
     if 'providers' not in config_dict.keys():
@@ -119,7 +118,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                 raise TypeError('Global config must be a dict.')
             for key, value in provider_config['global'].items():
                 # Additional check for global config
-                if not hasattr(obj, key):
+                if not hasattr(ctx.obj, key):
                     raise KeyError(f'{key} is not a valid global option.')
 
                 if key == 'mode':
@@ -157,15 +156,20 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
 
         task_list.append(Task(name, ctx, command, global_config, provider_config))
 
+    def call_update_time():
+        update_time(ctx.obj.output)
+
     def ensure_cache():
         for queue_task in task_list:
             queue_task.ensure_cache(quiet=True)
+        call_update_time()
 
     threading.Thread(target=ensure_cache).start()
 
     def update_cache():
         for queue_task in task_list:
             queue_task.update_cache()
+        call_update_time()
 
     schedule.every().day.at('23:30').do(update_cache)
 
@@ -199,13 +203,16 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
                 ret.append((task_item.command.name, task_item.name, task_hash))
             return indexpy.JSONResponse(ret)
 
+        if path == 'update_time':
+            return indexpy.JSONResponse(get_update_time(ctx.obj.output))
+
         if path in tasks_hash_table:
             return indexpy.FileResponse(filepath=str(tasks_hash_table[path].cache_path()))
 
         static_file = Path(__file__).parent / "static" / path
         if static_file.is_file():
             return indexpy.FileResponse(filepath=str(static_file))
-        return indexpy.HttpResponse(status_code=404)
+        return indexpy.HttpResponse(status_code=400)
 
     # noinspection PyTypeChecker
     uvicorn.run(app, host=config_dict['host'], port=config_dict['port'])

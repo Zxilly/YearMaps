@@ -1,5 +1,7 @@
 import hashlib
 import json
+from pathlib import Path
+from datetime import datetime
 
 
 def dict_hash(d: dict) -> str:
@@ -18,3 +20,17 @@ def option_name(name: str) -> str:
     name = name.replace('-', '_')
     name = name.lower()
     return name
+
+
+def update_time(cache_dir: str):
+    path = Path(cache_dir) / ".update_time"
+    with open(path, 'w') as f:
+        f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
+def get_update_time(cache_dir: str) -> str:
+    path = Path(cache_dir) / ".update_time"
+    if not path.exists():
+        return "Never updated."
+    with open(path, 'r') as f:
+        return str(f.read())
