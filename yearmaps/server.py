@@ -171,7 +171,7 @@ def cli(ctx: click.Context, host: str, port: int, config: str):
             queue_task.update_cache()
         call_update_time()
 
-    schedule.every().day.at('23:30').do(update_cache)
+    schedule.every(3).hours.do(update_cache)
 
     def loop():
         while True:
