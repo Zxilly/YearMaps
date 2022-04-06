@@ -9,7 +9,7 @@
 # 安装
 
 ```bash
-pip[3] install --user yearmaps
+pip install --user yearmaps
 ```
 
 # 使用
