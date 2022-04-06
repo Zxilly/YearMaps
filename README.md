@@ -1,6 +1,6 @@
 # YearMaps
 
-![PyPI](https://img.shields.io/pypi/v/yearmaps) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/zxilly/yearmaps)
+[![PyPI](https://img.shields.io/pypi/v/yearmaps)](https://pypi.org/project/yearmaps/) [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/zxilly/yearmaps)](https://hub.docker.com/r/zxilly/yearmaps)
 
 生成一年的热力图。
 
