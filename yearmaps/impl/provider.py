@@ -240,3 +240,5 @@ class Provider(ProviderInterface, ProviderUtils, ABC):
         else:
             path = Path(self.options.output) / f"{self.id}.{file_type}"
         plt.savefig(str(path), bbox_inches='tight', pad_inches=0.1, format=file_type)
+        plt.clf()
+        plt.close()
